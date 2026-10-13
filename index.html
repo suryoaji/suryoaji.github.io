@@ -15,7 +15,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-        <link href="css/styles.css?v=17" rel="stylesheet" />
+        <link href="css/styles.css?v=19" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -27,20 +27,21 @@
         </script>
     </head>
     <body>
-        <a class="skip" href="#main">Skip to content</a>
+        <a class="skip" href="#main" data-i18n="t1">Skip to content</a>
 
         <header class="nav">
             <div class="wrap nav-inner">
                 <a class="brand" href="#top">suryo<span class="accent">.</span>aji</a>
                 <div class="nav-right">
                     <nav aria-label="Sections">
-                        <a href="#work"><span class="hide-sm">Work </span>Experience</a>
-                        <a href="#portfolio">Portfolio</a>
-                        <a href="#experience">Education</a>
-                        <a href="#capabilities">Skills</a>
+                        <a href="#work" data-i18n="t2"><span class="hide-sm">Work </span>Experience</a>
+                        <a href="#portfolio" data-i18n="t3">Portfolio</a>
+                        <a href="#experience" data-i18n="t4">Education</a>
+                        <a href="#capabilities" data-i18n="t5">Skills</a>
                         <a href="#ai">AI</a>
-                        <a href="#contact">Contact</a>
+                        <a href="#contact" data-i18n="t6">Contact</a>
                     </nav>
+                    <button class="lang-toggle" type="button" id="lang-toggle" aria-label="Ganti ke Bahasa Indonesia" lang="id">ID</button>
                     <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch to dark mode">
                         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
                         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -54,21 +55,21 @@
             <section class="hero wrap" id="top">
                 <img class="avatar" src="assets/img/profile.jpg" alt="Suryo Aji" width="96" height="96" />
                 <p class="eyebrow">Mobile engineer · Surabaya, Indonesia</p>
-                <h1>Built for one bar of signal.</h1>
-                <p class="lede">I'm Suryo, and I build mobile apps that keep working when the connection doesn't. For the last five years I built lending apps for field agents in rural Indonesia. Their forms had to save offline and sync later without creating duplicates. Before that I spent five years at software agencies, on apps ranging from hotel operations for Shangri-La to a keyboard with Xendit payments built in. I write native Android in Kotlin and cross-platform apps in Flutter.</p>
+                <h1 data-i18n="t7">Built for one bar of signal.</h1>
+                <p class="lede" data-i18n="t8">I'm Suryo, and I build mobile apps that keep working when the connection doesn't. For the last five years I built lending apps for field agents in rural Indonesia. Their forms had to save offline and sync later without creating duplicates. Before that I spent five years at software agencies, on apps ranging from hotel operations for Shangri-La to a keyboard with Xendit payments built in. I write native Android in Kotlin and cross-platform apps in Flutter.</p>
 
                 <dl class="stats">
-                    <div><dt>10</dt><dd>years building mobile apps</dd></div>
-                    <div><dt>20+</dt><dd>apps built for clients and companies</dd></div>
-                    <div><dt>2</dt><dd>production apps I ran releases for</dd></div>
-                    <div><dt>8</dt><dd>years mentoring new mobile developers</dd></div>
+                    <div><dt>10</dt><dd data-i18n="t9">years building mobile apps</dd></div>
+                    <div><dt>20+</dt><dd data-i18n="t10">apps built for clients and companies</dd></div>
+                    <div><dt>2</dt><dd data-i18n="t11">production apps I ran releases for</dd></div>
+                    <div><dt>8</dt><dd data-i18n="t12">years mentoring new mobile developers</dd></div>
                 </dl>
             </section>
 
             <!-- Work -->
             <section class="section wrap" id="work">
                 <header class="section-head">
-                    <h2>Work Experience</h2>
+                    <h2 data-i18n="t13">Work Experience</h2>
                 </header>
 
                 <article class="job">
@@ -76,17 +77,17 @@
                         <h3>Amartha</h3>
                         <span class="when">2021 – 2026</span>
                     </header>
-                    <p class="job-role">Mobile Engineer · micro-lending</p>
+                    <p class="job-role" data-i18n="t14">Mobile Engineer · micro-lending</p>
                     <ul class="job-points">
-                        <li>Built a server-driven UI system for the lending features on the app's home screen. The product team can now launch and change promo banners without waiting for a new app release.</li>
-                        <li>Optimized data sync so field agents on a weak connection no longer create duplicate loan applications. Ops had been cleaning those up by hand.</li>
-                        <li>Enhanced app stability by resolving four crashes that kept coming back and an app freeze during file downloads.</li>
-                        <li>Added bank account validation to the loan application flow, using the company's payment system, to help catch fraud. It still works offline for field agents in rural areas.</li>
-                        <li>Also built web features in Next.js and backend services in Go when the work needed it.</li>
+                        <li data-i18n="t15">Built a server-driven UI system for the lending features on the app's home screen. The product team can now launch and change promo banners without waiting for a new app release.</li>
+                        <li data-i18n="t16">Optimized data sync so field agents on a weak connection no longer create duplicate loan applications. Ops had been cleaning those up by hand.</li>
+                        <li data-i18n="t17">Enhanced app stability by resolving four crashes that kept coming back and an app freeze during file downloads.</li>
+                        <li data-i18n="t18">Added bank account validation to the loan application flow, using the company's payment system, to help catch fraud. It still works offline for field agents in rural areas.</li>
+                        <li data-i18n="t19">Also built web features in Next.js and backend services in Go when the work needed it.</li>
                     </ul>
                     <ul class="projects">
-                        <li><strong>AmarthaFin</strong><span>Finance app for investors, borrowers, and agents</span><span class="tags">flutter</span></li>
-                        <li><strong>A-Partners</strong><span>Field officer app for borrower registration and surveys</span><span class="tags">android</span></li>
+                        <li><strong>AmarthaFin</strong><span data-i18n="t20">Finance app for investors, borrowers, and agents</span><span class="tags">flutter</span></li>
+                        <li><strong>A-Partners</strong><span data-i18n="t21">Field officer app for borrower registration and surveys</span><span class="tags">android</span></li>
                     </ul>
                 </article>
 
@@ -96,20 +97,20 @@
                         <span class="when">2020 – 2022</span>
                     </header>
                     <p class="job-role">Mobile Engineer · software agency</p>
-                    <p class="job-summary">I built apps for clients in fintech, healthcare, the creator economy, and professional networking, mostly in Flutter and usually on more than one project at a time. I took each one from the client's requirements and designs to working features connected to their backend.</p>
+                    <p class="job-summary" data-i18n="t22">I built apps for clients in fintech, healthcare, the creator economy, and professional networking, mostly in Flutter and usually on more than one project at a time. I took each one from the client's requirements and designs to working features connected to their backend.</p>
                     <ul class="projects">
-                        <li><strong>XENI Keyboard</strong><span>A keyboard app with Xendit payment services built in</span><span class="tags">flutter</span></li>
-                        <li><strong>Saham Rakyat</strong><span>Stock investing app</span><span class="tags">flutter</span></li>
-                        <li><strong>KAMI</strong><span>Subscription platform for content creators</span><span class="tags">flutter</span></li>
-                        <li><strong>Farhana Medika</strong><span>Medical services app for Farhana Medical</span><span class="tags">flutter</span></li>
-                        <li><strong>B2B Analytics</strong><span>Native analytics app for Indosat Ooredoo business clients</span><span class="tags">android</span></li>
-                        <li><strong>MEDA</strong><span>App for Meda Technology</span><span class="tags">flutter</span></li>
-                        <li><strong>Ranting Ranting</strong><span>App for Ranting Indonesia</span><span class="tags">flutter</span></li>
-                        <li><strong>Jomblo.com</strong><span>App for Jomblodotcom</span><span class="tags">flutter</span></li>
-                        <li><strong>Dokter</strong><span>App for IKA FK Unair</span><span class="tags">android · ios</span></li>
-                        <li><strong>CW Merchant</strong><span>Merchant app for Ciputra World</span><span class="tags">android</span></li>
-                        <li><strong>Xettle</strong><span>Financial planning app for PT Bebas Finansial Indonesia</span><span class="tags">flutter</span></li>
-                        <li><strong>Arvian</strong><span>App for Arvian Bakery Supply Surabaya</span><span class="tags">flutter</span></li>
+                        <li><strong>XENI Keyboard</strong><span data-i18n="t23">A keyboard app with Xendit payment services built in</span><span class="tags">flutter</span></li>
+                        <li><strong>Saham Rakyat</strong><span data-i18n="t24">Stock investing app</span><span class="tags">flutter</span></li>
+                        <li><strong>KAMI</strong><span data-i18n="t25">Subscription platform for content creators</span><span class="tags">flutter</span></li>
+                        <li><strong>Farhana Medika</strong><span data-i18n="t26">Medical services app for Farhana Medical</span><span class="tags">flutter</span></li>
+                        <li><strong>B2B Analytics</strong><span data-i18n="t27">Native analytics app for Indosat Ooredoo business clients</span><span class="tags">android</span></li>
+                        <li><strong>MEDA</strong><span data-i18n="t28">App for Meda Technology</span><span class="tags">flutter</span></li>
+                        <li><strong>Ranting Ranting</strong><span data-i18n="t29">App for Ranting Indonesia</span><span class="tags">flutter</span></li>
+                        <li><strong>Jomblo.com</strong><span data-i18n="t30">App for Jomblodotcom</span><span class="tags">flutter</span></li>
+                        <li><strong>Dokter</strong><span data-i18n="t31">App for IKA FK Unair</span><span class="tags">android · ios</span></li>
+                        <li><strong>CW Merchant</strong><span data-i18n="t32">Merchant app for Ciputra World</span><span class="tags">android</span></li>
+                        <li><strong>Xettle</strong><span data-i18n="t33">Financial planning app for PT Bebas Finansial Indonesia</span><span class="tags">flutter</span></li>
+                        <li><strong>Arvian</strong><span data-i18n="t34">App for Arvian Bakery Supply Surabaya</span><span class="tags">flutter</span></li>
                     </ul>
                 </article>
 
@@ -119,42 +120,42 @@
                         <span class="when">2016 – 2020</span>
                     </header>
                     <p class="job-role">Mobile Developer · software house</p>
-                    <p class="job-summary">I built Android apps for clients in hospitality, education, events, and government, mostly native in Java and Kotlin. Each one went from the client's requirements through API integration and QA to release. I also set up CI/CD on Bitrise to automate builds and releases.</p>
+                    <p class="job-summary" data-i18n="t35">I built Android apps for clients in hospitality, education, events, and government, mostly native in Java and Kotlin. Each one went from the client's requirements through API integration and QA to release. I also set up CI/CD on Bitrise to automate builds and releases.</p>
                     <ul class="projects">
-                        <li><strong>iOPS</strong><span>Hotel operations app for Shangri-La Hotel</span><span class="tags">android</span></li>
-                        <li><strong>LiveLync</strong><span>Digital business cards for professionals</span><span class="tags">flutter</span></li>
-                        <li><strong>Aspire-life</strong><span>Learning app for LearnFlux</span><span class="tags">android</span></li>
-                        <li><strong>OBVIO</strong><span>Event attendance app for VISEO</span><span class="tags">android</span></li>
-                        <li><strong>E-Report</strong><span>Attendance reporting for Dinas Pendidikan Sampang</span><span class="tags">android</span></li>
-                        <li><strong>NPO-Init</strong><span>App for a non-profit organization</span><span class="tags">flutter</span></li>
-                        <li><strong>Mother Nature</strong><span>App for Mother Nature Inc.</span><span class="tags">android</span></li>
-                        <li><strong>Digischool</strong><span>Internal company project</span><span class="tags">android</span></li>
-                        <li><strong>Wedding Attendance</strong><span>Attendance app for VISEO</span><span class="tags">android</span></li>
+                        <li><strong>iOPS</strong><span data-i18n="t36">Hotel operations app for Shangri-La Hotel</span><span class="tags">android</span></li>
+                        <li><strong>LiveLync</strong><span data-i18n="t37">Digital business cards for professionals</span><span class="tags">flutter</span></li>
+                        <li><strong>Aspire-life</strong><span data-i18n="t38">Learning app for LearnFlux</span><span class="tags">android</span></li>
+                        <li><strong>OBVIO</strong><span data-i18n="t39">Event attendance app for VISEO</span><span class="tags">android</span></li>
+                        <li><strong>E-Report</strong><span data-i18n="t40">Attendance reporting for Dinas Pendidikan Sampang</span><span class="tags">android</span></li>
+                        <li><strong>NPO-Init</strong><span data-i18n="t41">App for a non-profit organization</span><span class="tags">flutter</span></li>
+                        <li><strong>Mother Nature</strong><span data-i18n="t42">App for Mother Nature Inc.</span><span class="tags">android</span></li>
+                        <li><strong>Digischool</strong><span data-i18n="t43">Internal company project</span><span class="tags">android</span></li>
+                        <li><strong>Wedding Attendance</strong><span data-i18n="t44">Attendance app for VISEO</span><span class="tags">android</span></li>
                     </ul>
                 </article>
 
                 <article class="job">
                     <header class="job-head">
-                        <h3>More apps</h3>
+                        <h3 data-i18n="t45">More apps</h3>
                     </header>
-                    <p class="job-summary">Other apps I've built for clients, employers, and competitions.</p>
+                    <p class="job-summary" data-i18n="t46">Other apps I've built for clients, employers, and competitions.</p>
 
-                    <p class="group-label">Client work</p>
+                    <p class="group-label" data-i18n="t47">Client work</p>
                     <ul class="projects">
-                        <li><strong>STIEM Portal</strong><span>App for STIE Mahardhika Campus</span><span class="tags">flutter</span></li>
-                        <li><strong>IniTukang</strong><span>App for PT Geoanfield Solusi Indonesia</span><span class="tags">android</span></li>
+                        <li><strong>STIEM Portal</strong><span data-i18n="t48">App for STIE Mahardhika Campus</span><span class="tags">flutter</span></li>
+                        <li><strong>IniTukang</strong><span data-i18n="t49">App for PT Geoanfield Solusi Indonesia</span><span class="tags">android</span></li>
                     </ul>
 
-                    <p class="group-label">2014 – 2016 · internship &amp; university</p>
+                    <p class="group-label" data-i18n="t50">2014 – 2016 · internship &amp; university</p>
                     <ul class="projects">
-                        <li><strong>Stereo Camera</strong><span>Student project</span><span class="tags">c++</span></li>
-                        <li><strong>Andresto</strong><span>Student project</span><span class="tags">android</span></li>
-                        <li><strong>Electric Bender</strong><span>Electricity control system, student project</span><span class="tags">android</span></li>
-                        <li><strong>eMOV Rent</strong><span>Student project</span><span class="tags">android</span></li>
-                        <li><strong>SIADU</strong><span>Academic information system for CV Summa Edu Visitama</span><span class="tags">android</span></li>
-                        <li><strong>Travel Order Verification</strong><span>PT Semen Indonesia</span><span class="tags">android</span></li>
+                        <li><strong>Stereo Camera</strong><span data-i18n="t51">Student project</span><span class="tags">c++</span></li>
+                        <li><strong>Andresto</strong><span data-i18n="t51">Student project</span><span class="tags">android</span></li>
+                        <li><strong>Electric Bender</strong><span data-i18n="t52">Electricity control system, student project</span><span class="tags">android</span></li>
+                        <li><strong>eMOV Rent</strong><span data-i18n="t51">Student project</span><span class="tags">android</span></li>
+                        <li><strong>SIADU</strong><span data-i18n="t53">Academic information system for CV Summa Edu Visitama</span><span class="tags">android</span></li>
+                        <li><strong data-i18n="t54">Travel Order Verification</strong><span>PT Semen Indonesia</span><span class="tags">android</span></li>
                         <li><strong>Andro Son &amp; Mom</strong><span>INAICTA, Kemenristek-Dikti</span><span class="tags">android</span></li>
-                        <li><strong>AUTROM</strong><span>Automatic trolley machine for PT Astra Otoparts</span><span class="tags">android</span></li>
+                        <li><strong>AUTROM</strong><span data-i18n="t55">Automatic trolley machine for PT Astra Otoparts</span><span class="tags">android</span></li>
                     </ul>
                 </article>
             </section>
@@ -162,8 +163,8 @@
             <!-- Portfolio -->
             <section class="section wrap" id="portfolio">
                 <header class="section-head">
-                    <h2>Portfolio</h2>
-                    <p class="muted">Apps I worked on that you can download today.</p>
+                    <h2 data-i18n="t3">Portfolio</h2>
+                    <p class="muted" data-i18n="t56">Apps I worked on that you can download today.</p>
                 </header>
 
                 <div class="apps">
@@ -171,8 +172,8 @@
                         <img class="app-icon" src="assets/img/apps/amarthafin-icon.jpg" alt="AmarthaFin app icon" width="64" height="64" loading="lazy" />
                         <div class="app-body">
                             <h3>AmarthaFin</h3>
-                            <p class="app-meta">Amartha · Finance · 1M+ downloads · flutter</p>
-                            <p>Amartha's main app in Indonesia. People use it to invest in micro-businesses, take out small business loans, pay bills, and sell phone credit as agents. I built the server-driven banners on the home screen and worked on the Modal Amartha loan flow.</p>
+                            <p class="app-meta" data-i18n="t57">Amartha · Finance · 1M+ downloads · flutter</p>
+                            <p data-i18n="t58">Amartha's main app in Indonesia. People use it to invest in micro-businesses, take out small business loans, pay bills, and sell phone credit as agents. I built the server-driven banners on the home screen and worked on the Modal Amartha loan flow.</p>
                             <div class="store-links">
                                 <a class="store" href="https://play.google.com/store/apps/details?id=com.amarthaplus.amarthabeyond">Google Play ↗</a>
                                 <a class="store" href="https://apps.apple.com/id/app/amarthafin/id6446885044">App Store ↗</a>
@@ -192,8 +193,8 @@
                         <img class="app-icon" src="assets/img/apps/a-partners-icon.webp" alt="A-Partners app icon" width="64" height="64" loading="lazy" />
                         <div class="app-body">
                             <h3>A-Partners</h3>
-                            <p class="app-meta">Amartha · Field operations · 100K+ downloads · android</p>
-                            <p>The app Amartha's field officers use to register new borrowers, fill in surveys, and schedule group meetings, often with a weak connection. I worked on the survey form: bank account validation against the payment system, optimized data sync so weak connections no longer create duplicate loan applications, and better stability.</p>
+                            <p class="app-meta" data-i18n="t59">Amartha · Field operations · 100K+ downloads · android</p>
+                            <p data-i18n="t60">The app Amartha's field officers use to register new borrowers, fill in surveys, and schedule group meetings, often with a weak connection. I worked on the survey form: bank account validation against the payment system, optimized data sync so weak connections no longer create duplicate loan applications, and better stability.</p>
                             <div class="store-links">
                                 <a class="store" href="https://play.google.com/store/apps/details?id=com.amf.superapp.release">Google Play ↗</a>
                             </div>
@@ -209,8 +210,8 @@
                         <img class="app-icon" src="assets/img/apps/saham-rakyat-icon.jpg" alt="Saham Rakyat app icon" width="64" height="64" loading="lazy" />
                         <div class="app-body">
                             <h3>Saham Rakyat</h3>
-                            <p class="app-meta">Twiscode · Finance · 100K+ downloads · flutter</p>
-                            <p>A stock trading app by Samuel Sekuritas Indonesia, made for people buying shares for the first time. Users learn the basics, put shares in a cart and buy them in one checkout, and read updates from analysts. I built features for it in Flutter while at Twiscode.</p>
+                            <p class="app-meta" data-i18n="t61">Twiscode · Finance · 100K+ downloads · flutter</p>
+                            <p data-i18n="t62">A stock trading app by Samuel Sekuritas Indonesia, made for people buying shares for the first time. Users learn the basics, put shares in a cart and buy them in one checkout, and read updates from analysts. I built features for it in Flutter while at Twiscode.</p>
                             <div class="store-links">
                                 <a class="store" href="https://play.google.com/store/apps/details?id=com.twiscode.sahamrakyat">Google Play ↗</a>
                                 <a class="store" href="https://apps.apple.com/id/app/saham-rakyat/id1544393720">App Store ↗</a>
@@ -231,8 +232,8 @@
                         <img class="app-icon" src="assets/img/apps/stiem-portal-icon.webp" alt="STIEM Portal app icon" width="64" height="64" loading="lazy" />
                         <div class="app-body">
                             <h3>STIEM Portal</h3>
-                            <p class="app-meta">STIE Mahardhika · Education · 500+ downloads · flutter</p>
-                            <p>The campus app for STIE Mahardhika in Surabaya. Students use it to check class schedules, pay tuition, see their grades and study plan, and get campus news. I worked on it in Flutter, including the iOS build and signing.</p>
+                            <p class="app-meta" data-i18n="t63">STIE Mahardhika · Education · 500+ downloads · flutter</p>
+                            <p data-i18n="t64">The campus app for STIE Mahardhika in Surabaya. Students use it to check class schedules, pay tuition, see their grades and study plan, and get campus news. I worked on it in Flutter, including the iOS build and signing.</p>
                             <div class="store-links">
                                 <a class="store" href="https://play.google.com/store/apps/details?id=com.stiem.portal">Google Play ↗</a>
                             </div>
@@ -251,25 +252,25 @@
             <!-- Background -->
             <section class="section wrap" id="experience">
                 <header class="section-head">
-                    <h2>Education &amp; more</h2>
+                    <h2 data-i18n="t65">Education &amp; more</h2>
                 </header>
 
                 <ol class="timeline">
                     <li>
-                        <span class="when">2018 – now</span>
-                        <div><strong>Mobile Developer Mentor (part-time)</strong><span class="where">Flashcom Indonesia</span></div>
+                        <span class="when" data-i18n="t66">2018 – now</span>
+                        <div><strong data-i18n="t67">Mobile Developer Mentor (part-time)</strong><span class="where">Flashcom Indonesia</span></div>
                     </li>
                     <li>
                         <span class="when">2014</span>
-                        <div><strong>Mobile Developer Intern</strong><span class="where">PT Semen Indonesia</span></div>
+                        <div><strong data-i18n="t68">Mobile Developer Intern</strong><span class="where">PT Semen Indonesia</span></div>
                     </li>
                     <li>
                         <span class="when">2012 – 2016</span>
-                        <div><strong>BASc. Computer Engineering</strong><span class="where">Electronics Engineering Polytechnic Institute of Surabaya (PENS)</span></div>
+                        <div><strong data-i18n="t69">BASc. Computer Engineering</strong><span class="where" data-i18n="t70">Electronics Engineering Polytechnic Institute of Surabaya (PENS)</span></div>
                     </li>
                     <li>
                         <span class="when">2011 – 2012</span>
-                        <div><strong>Informatics Engineering Venture Program</strong><span class="where">Sepuluh Nopember Institute of Technology (ITS)</span></div>
+                        <div><strong data-i18n="t71">Informatics Engineering Venture Program</strong><span class="where" data-i18n="t72">Sepuluh Nopember Institute of Technology (ITS)</span></div>
                     </li>
                 </ol>
             </section>
@@ -277,25 +278,25 @@
             <!-- Capabilities -->
             <section class="section wrap" id="capabilities">
                 <header class="section-head">
-                    <h2>Skills</h2>
+                    <h2 data-i18n="t5">Skills</h2>
                 </header>
 
                 <div class="caps">
                     <div>
-                        <h3>Native Android</h3>
-                        <p>Kotlin, Java, Jetpack, Coroutines, Room, Clean Architecture. Multi-module apps and forms that work offline.</p>
+                        <h3 data-i18n="t73">Native Android</h3>
+                        <p data-i18n="t74">Kotlin, Java, Jetpack, Coroutines, Room, Clean Architecture. Multi-module apps and forms that work offline.</p>
                     </div>
                     <div>
                         <h3>Flutter</h3>
-                        <p>Dart, server-driven UI, webviews with a JS bridge, design system migration, iOS builds and code signing.</p>
+                        <p data-i18n="t75">Dart, server-driven UI, webviews with a JS bridge, design system migration, iOS builds and code signing.</p>
                     </div>
                     <div>
-                        <h3>Backend &amp; services</h3>
-                        <p>Firebase (Firestore, Remote Config, Crashlytics, Storage, Analytics), CleverTap, REST APIs. Some Next.js and Go when a feature needs it.</p>
+                        <h3 data-i18n="t76">Backend &amp; services</h3>
+                        <p data-i18n="t77">Firebase (Firestore, Remote Config, Crashlytics, Storage, Analytics), CleverTap, REST APIs. Some Next.js and Go when a feature needs it.</p>
                     </div>
                     <div>
-                        <h3>Other</h3>
-                        <p>Release management, CI/CD on Bitrise, debugging crashes from Crashlytics, unit and widget tests, writing RFCs.</p>
+                        <h3 data-i18n="t78">Other</h3>
+                        <p data-i18n="t79">Release management, CI/CD on Bitrise, debugging crashes from Crashlytics, unit and widget tests, writing RFCs.</p>
                     </div>
                 </div>
             </section>
@@ -303,51 +304,51 @@
             <!-- AI workflow -->
             <section class="section wrap" id="ai">
                 <header class="section-head">
-                    <h2>How I use AI</h2>
-                    <p class="muted">I use coding agents, mostly Claude Code, for a lot of my daily work. Here is how I keep their changes easy to check.</p>
+                    <h2 data-i18n="t80">How I use AI</h2>
+                    <p class="muted" data-i18n="t81">I use coding agents, mostly Claude Code, for a lot of my daily work. Here is how I keep their changes easy to check.</p>
                 </header>
 
                 <div class="caps">
                     <div>
-                        <h3>A written spec before any code</h3>
-                        <p>On my last team, every ticket in the Android repo got a spec first, covering what we found, the plan, and an approval. Then the agent wrote failing tests, and only after that the code to make them pass. If an existing test broke, it stopped and told me instead of editing the test.</p>
+                        <h3 data-i18n="t82">A written spec before any code</h3>
+                        <p data-i18n="t83">On my last team, every ticket in the Android repo got a spec first, covering what we found, the plan, and an approval. Then the agent wrote failing tests, and only after that the code to make them pass. If an existing test broke, it stopped and told me instead of editing the test.</p>
                     </div>
                     <div>
-                        <h3>Reviewing pull requests</h3>
-                        <p>I have the agent check a pull request against the ticket's spec and the team's checklist. For example: is there an approval, and what does the screen do offline? I still read the diff myself.</p>
+                        <h3 data-i18n="t84">Reviewing pull requests</h3>
+                        <p data-i18n="t85">I have the agent check a pull request against the ticket's spec and the team's checklist. For example: is there an approval, and what does the screen do offline? I still read the diff myself.</p>
                     </div>
                     <div>
-                        <h3>Firebase and Jira in the agent</h3>
-                        <p>Crashlytics, Remote Config, and Jira are connected to the agent through MCP. I can look at a crash, find the cause in the code, and update the ticket without switching between tools.</p>
+                        <h3 data-i18n="t86">Firebase and Jira in the agent</h3>
+                        <p data-i18n="t87">Crashlytics, Remote Config, and Jira are connected to the agent through MCP. I can look at a crash, find the cause in the code, and update the ticket without switching between tools.</p>
                     </div>
                     <div>
-                        <h3>Trying tools before recommending them</h3>
-                        <p>Before I suggest a new AI tool to a team, I set it up myself. When I tried a self-hosted agent platform, I found a bug that broke its documented no-login mode and wrote a small workaround. I recommended a security review before using it on company code.</p>
+                        <h3 data-i18n="t88">Trying tools before recommending them</h3>
+                        <p data-i18n="t89">Before I suggest a new AI tool to a team, I set it up myself. When I tried a self-hosted agent platform, I found a bug that broke its documented no-login mode and wrote a small workaround. I recommended a security review before using it on company code.</p>
                     </div>
                 </div>
 
-                <p class="toolbelt"><span class="eyebrow">Tools I use</span>Claude Code · Codex CLI · GitHub Copilot · Gemini CLI · MCP servers (Firebase, Jira)</p>
+                <p class="toolbelt"><span class="eyebrow" data-i18n="t90">Tools I use</span>Claude Code · Codex CLI · GitHub Copilot · Gemini CLI · MCP servers (Firebase, Jira)</p>
             </section>
 
             <!-- Recognition -->
             <section class="section wrap" id="recognition">
                 <header class="section-head">
-                    <h2>Awards</h2>
+                    <h2 data-i18n="t91">Awards</h2>
                 </header>
                 <ul class="awards">
                     <li><span>Best Paper</span><span class="muted">5th International Conference KCIC<span class="org">IEEE Indonesia</span></span><span class="year">2016</span></li>
-                    <li><span>Semi-finalist</span><span class="muted">Microsoft Imagine Cup Indonesia</span><span class="year">2016</span></li>
+                    <li><span data-i18n="t92">Semi-finalist</span><span class="muted">Microsoft Imagine Cup Indonesia</span><span class="year">2016</span></li>
                     <li><span>Best Application</span><span class="muted">Software EXPO<span class="org">PENS</span></span><span class="year">2015</span></li>
-                    <li><span>2nd place</span><span class="muted">GS Astra Power of Innovation Award<span class="org">PT Astra Otoparts Tbk</span></span><span class="year">2014</span></li>
+                    <li><span data-i18n="t93">2nd place</span><span class="muted">GS Astra Power of Innovation Award<span class="org">PT Astra Otoparts Tbk</span></span><span class="year">2014</span></li>
                 </ul>
             </section>
 
             <!-- Contact -->
             <section class="section wrap contact" id="contact">
-                <h2>Contact</h2>
-                <p class="muted">Email is the easiest way to reach me.</p>
+                <h2 data-i18n="t6">Contact</h2>
+                <p class="muted" data-i18n="t94">Email is the easiest way to reach me.</p>
                 <div class="actions">
-                    <a class="btn" href="mailto:suryojiwa@gmail.com">Email me</a>
+                    <a class="btn" href="mailto:suryojiwa@gmail.com" data-i18n="t95">Email me</a>
                     <a class="link" href="https://linkedin.com/in/suryoajiw">LinkedIn ↗</a>
                     <a class="link" href="https://github.com/suryoaji">GitHub ↗</a>
                     <a class="link" href="https://wa.me/62817212108">WhatsApp ↗</a>
@@ -361,6 +362,7 @@
             <span>WIB (UTC+7)</span>
         </footer>
 
-        <script src="js/scripts.js?v=2"></script>
+        <script src="js/i18n.js?v=1"></script>
+        <script src="js/scripts.js?v=3"></script>
     </body>
 </html>
