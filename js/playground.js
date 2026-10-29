@@ -508,6 +508,7 @@
                     var tab = el('span', 'pg-tab' + (i === active ? ' is-active' : ''));
                     tab.setAttribute('role', 'button');
                     tab.tabIndex = 0;
+                    tab.dataset.screen = item.screen || '';
                     tab.appendChild(el('span', 'pg-tab-icon', item.emoji));
                     tab.appendChild(el('span', 'pg-tab-label', item.label));
                     var go = function () {
@@ -544,7 +545,10 @@
         var other = lastPayload.screens && lastPayload.screens[id];
         return other && Array.isArray(other.children) ? other : null;
     }
-    function show() {
+    // fromTab: switching tabs only swaps the content with a short fade; the tab
+    // bar stays in place, like a native tab bar, instead of the whole screen
+    // playing its entry animation again.
+    function show(fromTab) {
         var target = screenById(currentScreen);
         if (!target) { currentScreen = 'home'; target = lastPayload.screen; }
         counted = 0;
@@ -556,15 +560,25 @@
             if (c && c.type === 'tabbar') return;
             var n = render(c, appVersion);
             if (!n) return;
-            animate(n, c.animation, index++ * stagger);
+            if (fromTab) {
+                if (!reduceMotion) n.style.animation = 'pg-fadeIn 220ms ease both';
+            } else {
+                animate(n, c.animation, index++ * stagger);
+            }
             frag.appendChild(n);
         });
-        var barSpec = null;
-        lastPayload.screen.children.forEach(function (c) { if (c && c.type === 'tabbar') barSpec = c; });
-        var bar = barSpec ? render(barSpec, appVersion) : null;
         body.replaceChildren(frag);
-        tabbarSlot.replaceChildren(bar || '');
-        screen.classList.toggle('has-tabbar', !!bar);
+        if (fromTab) {
+            tabbarSlot.querySelectorAll('.pg-tab').forEach(function (tab) {
+                tab.classList.toggle('is-active', tab.dataset.screen === currentScreen);
+            });
+        } else {
+            var barSpec = null;
+            lastPayload.screen.children.forEach(function (c) { if (c && c.type === 'tabbar') barSpec = c; });
+            var bar = barSpec ? render(barSpec, appVersion) : null;
+            tabbarSlot.replaceChildren(bar || '');
+            screen.classList.toggle('has-tabbar', !!bar);
+        }
         screen.style.background = safeColor(target.background || lastPayload.screen.background, '#ffffff');
         tick();
         status.textContent = t().valid(counted, new Blob([editor.value]).size) + ' · ' + t().screen + ': ' + currentScreen;
@@ -572,9 +586,11 @@
     }
     function openScreen(id) {
         if (!lastPayload || !screenById(id)) return;
+        // Tapping the tab you're already on scrolls to the top, like iOS
+        if (id === currentScreen) { scroller.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         currentScreen = id;
         scroller.scrollTop = 0;
-        show();
+        show(true);
     }
 
     function update() {
