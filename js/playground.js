@@ -96,6 +96,14 @@
         }
     };
     function t() { return copy[root.lang === 'id' ? 'id' : 'en']; }
+    // Umami custom event (clicks are tracked from data-umami-event). The script
+    // loads deferred, so an event sent before it's ready waits for page load.
+    function track(name, data) {
+        if (window.umami && umami.track) { umami.track(name, data); return; }
+        if (document.readyState !== 'complete') {
+            window.addEventListener('load', function () { if (window.umami && umami.track) umami.track(name, data); }, { once: true });
+        }
+    }
 
     // What each app build can draw. v2 shipped the countdown widget.
     var BASE = ['text', 'banner', 'hero', 'section', 'grid', 'carousel', 'progress', 'row', 'chip', 'list', 'button', 'spacer', 'tabbar'];
@@ -214,7 +222,7 @@
         lending: build({
             id: 'lending',
             bg: ['#f5f3ff', '#ecfdf5', '#fff7ed', '#eff6ff'],
-            hello: 'Good morning, Sari',
+            hello: 'Good morning, Prita',
             title: 'Your business, one tap away',
             hero: {
                 home: ['Business loan up to Rp 10 juta', 'Decision in minutes for active partners', '💸', '#6d28d9', '#c026d3', '/loan/apply'],
@@ -244,7 +252,7 @@
                     ['list', ['Earlier', ['Group meeting moved', "Thursday 09:00 at Bu Rina's house", 'Mon'], ['New: water bills', 'Pay PDAM from the app', 'Sun']]]
                 ] },
                 profile: { title: 'Profile', blocks: [
-                    ['hero', ['Sari Wulandari', 'Partner since 2021 · Group Mawar', '👩🏻', '#6d28d9', '#c026d3']],
+                    ['hero', ['Prita Pitri', 'Partner since 2021 · Group Mawar', '👩🏻', '#6d28d9', '#c026d3']],
                     ['grid'],
                     ['list', ['Account', ['Phone', '0812 •••• 4410'], ['Bank account', 'BRI •••• 2231', 'Verified']]],
                     ['button', ['Log out', '/logout'], 'secondary']
@@ -284,7 +292,7 @@
                     ['list', ['Saved dishes', ['Nasi goreng kampung', 'Warung Bu Tini', 'Rp 28.000'], ['Soto ayam', 'Soto Cak Har', 'Rp 22.000']]]
                 ] },
                 profile: { title: 'Profile', blocks: [
-                    ['hero', ['Rizky Pratama', 'Gold member · 128 orders', '🧑🏽', '#dc2626', '#f97316']],
+                    ['hero', ['Connor Wicks', 'Gold member · 128 orders', '🧑🏽', '#dc2626', '#f97316']],
                     ['grid'],
                     ['list', ['Account', ['Address', 'Jl. Darmo 12, Surabaya'], ['Payment', 'E-wallet •••• 0912', 'Default']]],
                     ['button', ['Log out', '/logout'], 'secondary']
@@ -294,7 +302,7 @@
         travel: build({
             id: 'travel',
             bg: ['#f0f9ff', '#f0fdf4', '#eef2ff', '#fff1f2'],
-            hello: 'Hi Dimas',
+            hello: 'Hi Jared',
             title: 'Where to next?',
             hero: {
                 home: ['A weekend in Bali from Rp 1,2 juta', 'Flight and two nights included', '🏝️', '#0369a1', '#06b6d4', '/deals/bali'],
@@ -324,7 +332,7 @@
                     ['list', ['Earlier', ['Price drop', 'Jakarta → Tokyo now Rp 4,9 juta', 'Mon'], ['Points added', '+320 from your last trip', 'Sat']]]
                 ] },
                 profile: { title: 'Profile', blocks: [
-                    ['hero', ['Dimas Saputra', 'Gold tier · 14 trips', '🧑🏻', '#0369a1', '#06b6d4']],
+                    ['hero', ['Jared Leto', 'Gold tier · 14 trips', '🧑🏻', '#0369a1', '#06b6d4']],
                     ['grid'],
                     ['list', ['Travel documents', ['Passport', 'Valid until 2031', 'Saved'], ['ID card', 'KTP', 'Saved']]],
                     ['button', ['Log out', '/logout'], 'secondary']
@@ -335,7 +343,7 @@
             id: 'learning',
             bg: ['#faf5ff', '#f0fdfa', '#fdf4ff', '#eff6ff'],
             hello: '12-day streak 🔥',
-            title: 'Keep going, Ayu',
+            title: 'Keep going, Morgan',
             hero: {
                 home: ['Finish Kotlin basics this week', 'Two lessons left in this module', '📘', '#7c3aed', '#2563eb', '/course/kotlin'],
                 campaign: ['Exam prep plans, 40% off', 'Practice tests with worked answers', '📝', '#0f766e', '#0369a1', '/promo/exams'],
@@ -365,9 +373,9 @@
                     ['list', ['This month', ['Lessons finished', 'Since 1 Oct', '23'], ['Quizzes passed', 'Out of 11', '9'], ['Time spent', 'About 13 min a day', '6 h 40 min']]]
                 ] },
                 profile: { title: 'Profile', blocks: [
-                    ['hero', ['Ayu Lestari', 'Learning since 2024 · Level 7', '👩🏽‍💻', '#7c3aed', '#2563eb']],
+                    ['hero', ['Morgan Stark', 'Learning since 2024 · Level 7', '👩🏽‍💻', '#7c3aed', '#2563eb']],
                     ['grid'],
-                    ['list', ['Account', ['Email', 'ayu@•••.com'], ['Plan', 'Pro · renews 1 Dec']]],
+                    ['list', ['Account', ['Email', 'morgan@•••.com'], ['Plan', 'Pro · renews 1 Dec']]],
                     ['button', ['Log out', '/logout'], 'secondary']
                 ] }
             }
@@ -776,7 +784,7 @@
         editor.setRangeText('  ', editor.selectionStart, editor.selectionEnd, 'end');
         update();
     });
-    version.addEventListener('change', rerender);
+    version.addEventListener('change', function () { rerender(); track('Playground app version', { version: 'v' + version.value }); });
 
     var scenario = 'home';
     function load(name) {
@@ -792,7 +800,7 @@
     presetButtons.forEach(function (b) {
         b.addEventListener('click', function () { load(b.dataset.preset); });
     });
-    themeSelect.addEventListener('change', function () { load(scenario); });
+    themeSelect.addEventListener('change', function () { load(scenario); track('Playground app theme', { theme: themeSelect.value }); });
 
     // Device picker. The open Duo is wide, so it stacks above the editor, and the
     // whole frame is zoomed down when it doesn't fit the column.
@@ -829,6 +837,8 @@
         foldButton.title = duoOpen ? t().fold : t().unfold;
         foldButton.setAttribute('aria-label', foldButton.title);
         fit();
+        // The editor changes width when the layout stacks; CodeMirror has to re-measure
+        if (cm) cm.refresh();
         scroller.scrollTop = 0;
         rerender();
     }
@@ -868,7 +878,12 @@
     }
 
     // Status and skipped-component labels follow the site language
-    new MutationObserver(rerender).observe(root, { attributes: true, attributeFilter: ['lang'] });
+    // Icon buttons show their (translated) label as a tooltip
+    function iconTitles() {
+        document.querySelectorAll('.pg-icon-btn').forEach(function (b) { b.title = b.textContent.trim(); });
+    }
+    iconTitles();
+    new MutationObserver(function () { rerender(); iconTitles(); }).observe(root, { attributes: true, attributeFilter: ['lang'] });
     // The phone follows the site theme: repaint the screen colour, nothing else re-renders
     var appearanceButton = document.getElementById('sim-appearance');
     var deviceFrame = document.querySelector('.pg-device');
@@ -924,6 +939,7 @@
     // Opened from a shared link: start from that payload instead of a preset
     var shared = /^#p=([A-Za-z0-9_-]+)$/.exec(location.hash);
     if (shared) {
+        track('Playground shared link opened');
         decodePayload(shared[1]).then(function (text) {
             try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (e) { /* show it as sent */ }
             setCode(text);
