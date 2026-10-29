@@ -76,6 +76,57 @@
     cursor: text;
 }
 #pg-json:focus { outline: none; }
+
+/* CodeMirror, themed to the site in both modes */
+.pg-editor .CodeMirror {
+    height: 600px;
+    background: transparent;
+    color: var(--text);
+    font: 0.8rem/1.6 var(--mono);
+}
+.pg-editor .CodeMirror-gutters { background: transparent; border-right: 1px solid var(--line); }
+.pg-editor .CodeMirror-linenumber { color: var(--muted); opacity: 0.6; padding: 0 6px 0 10px; }
+.pg-editor .CodeMirror-cursor { border-left: 1.5px solid var(--accent); }
+.pg-editor .CodeMirror-selected,
+.pg-editor .CodeMirror-focused .CodeMirror-selected { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.pg-editor .CodeMirror-activeline-background { background: transparent; }
+.pg-editor .cm-s-default .cm-string { color: #0f766e; }
+.pg-editor .cm-s-default .cm-property,
+.pg-editor .cm-s-default .cm-string.cm-property { color: #9a3412; }
+.pg-editor .cm-s-default .cm-number { color: #7c3aed; }
+.pg-editor .cm-s-default .cm-atom { color: #2563eb; }
+.pg-editor .CodeMirror-matchingbracket { color: var(--accent) !important; background: color-mix(in srgb, var(--accent) 15%, transparent); }
+:root[data-theme="dark"] .pg-editor .cm-s-default .cm-string { color: #5eead4; }
+:root[data-theme="dark"] .pg-editor .cm-s-default .cm-property,
+:root[data-theme="dark"] .pg-editor .cm-s-default .cm-string.cm-property { color: #fdba74; }
+:root[data-theme="dark"] .pg-editor .cm-s-default .cm-number { color: #c4b5fd; }
+:root[data-theme="dark"] .pg-editor .cm-s-default .cm-atom { color: #93c5fd; }
+/* Fold arrows and the folded "{…}" marker */
+.pg-editor .CodeMirror-foldgutter { width: 14px; }
+.pg-editor .CodeMirror-foldgutter-open,
+.pg-editor .CodeMirror-foldgutter-folded { color: var(--muted); cursor: pointer; }
+.pg-editor .CodeMirror-foldgutter-open:hover,
+.pg-editor .CodeMirror-foldgutter-folded:hover { color: var(--accent); }
+.pg-editor .CodeMirror-foldmarker {
+    color: var(--accent);
+    text-shadow: none;
+    font-family: var(--mono);
+    padding: 0 4px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.pg-fold-actions { display: flex; gap: 6px; margin-left: auto; flex: none; }
+.pg-fold-btn {
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font: 0.7rem var(--mono);
+    white-space: nowrap;
+    cursor: pointer;
+}
+.pg-fold-btn:hover { color: var(--text); border-color: var(--muted); }
 .pg-editor:focus-within { border-color: var(--accent); }
 
 /* Device preview styled like the iOS Simulator. The app itself is light-themed */
@@ -501,6 +552,38 @@
 .pg-screen.has-tabbar .pg-toast { bottom: 92px; }
 .pg-screen.has-tabbar .pg-home-indicator { z-index: 3; }
 
+/* Dark mode on the phone follows the site theme, in the style of iOS dark mode.
+   Coloured hero, banner and card gradients stay as they are. */
+:root[data-theme="dark"] .pg-screen { color: #f2f2f7; }
+:root[data-theme="dark"] .pg-text-caption,
+:root[data-theme="dark"] .pg-list-title,
+:root[data-theme="dark"] .pg-list-item span,
+:root[data-theme="dark"] .pg-progress-caption { color: #8e8e93; }
+:root[data-theme="dark"] .pg-list-trailing { color: #f2f2f7 !important; }
+:root[data-theme="dark"] .pg-list,
+:root[data-theme="dark"] .pg-grid-tiles,
+:root[data-theme="dark"] .pg-progress { background: rgba(44, 44, 46, 0.82); }
+:root[data-theme="dark"] .pg-list-item { border-top-color: rgba(255, 255, 255, 0.08); }
+:root[data-theme="dark"] .pg-tile-icon { background: linear-gradient(160deg, #3a3a3c, #2c2c2e); box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+:root[data-theme="dark"] .pg-tile-label { color: #d1d1d6; }
+:root[data-theme="dark"] .pg-chip-item { background: rgba(255, 255, 255, 0.1); }
+:root[data-theme="dark"] .pg-section-more { color: #0a84ff; }
+:root[data-theme="dark"] .pg-progress-track { background: rgba(255, 255, 255, 0.12); }
+:root[data-theme="dark"] .pg-progress-top span { color: #30d158; }
+:root[data-theme="dark"] .pg-button { background: #f2f2f7; color: #000; }
+:root[data-theme="dark"] .pg-button-secondary { background: transparent; color: #f2f2f7; box-shadow: inset 0 0 0 1.5px #f2f2f7; }
+:root[data-theme="dark"] .pg-countdown { background: #2c2c2e; }
+:root[data-theme="dark"] .pg-skipped { color: #ff6961; border-color: #ff6961; background: rgba(255, 69, 58, 0.12); }
+:root[data-theme="dark"] .pg-tabbar { background: rgba(28, 28, 30, 0.82); border-top-color: rgba(255, 255, 255, 0.12); }
+:root[data-theme="dark"] .pg-tab.is-active .pg-tab-label { color: #0a84ff; }
+:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-tabbar { background: rgba(44, 44, 46, 0.8); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 6px 18px -8px rgba(0, 0, 0, 0.6); }
+:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-tab.is-active { background: rgba(10, 132, 255, 0.28); }
+:root[data-theme="dark"] .pg-statusbar { color: #fff; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0)); }
+:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-statusbar { background: none; }
+:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-ring { color: #fff; }
+:root[data-theme="dark"] .pg-home-indicator { background: #fff; }
+:root[data-theme="dark"] .pg-toast { background: rgba(58, 58, 60, 0.92); }
+
 /* Reference panel under the editor */
 .pg-ref { border-top: 1px solid var(--line); }
 .pg-ref summary {
@@ -546,6 +629,7 @@
     .pg-grid { grid-template-columns: 1fr; }
     .pg-device { position: static; order: -1; }
     #pg-json { height: 420px; }
+    .pg-editor .CodeMirror { height: 420px; }
 }
 @media (max-width: 640px) {
     .pg-intro { padding-top: 48px; }

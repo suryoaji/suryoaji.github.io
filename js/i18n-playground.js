@@ -57,5 +57,7 @@ Object.assign(window.I18N_ID, {
     "p55": "Perangkat",
     "p56": "terlipat",
     "p57": "terbuka",
-    "p58": "Payload sama, layar lebih lebar: aplikasilah yang menentukan layout dua kolom, bukan server."
+    "p58": "Payload sama, layar lebih lebar: aplikasilah yang menentukan layout dua kolom, bukan server.",
+    "p59": "Lipat semua",
+    "p60": "Buka semua"
 });

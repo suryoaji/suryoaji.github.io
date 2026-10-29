@@ -16,7 +16,10 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
         <link href="css/styles.css?v=31" rel="stylesheet" />
-        <link href="css/playground.css?v=18" rel="stylesheet" />
+        <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
+        <link href="css/playground.css?v=21" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -29,6 +32,7 @@
     </head>
     <body>
         <canvas class="sky sky-page" aria-hidden="true"></canvas>
+        <canvas class="sky sky-hero" aria-hidden="true"></canvas>
         <svg width="0" height="0" style="position: absolute" aria-hidden="true">
             <filter id="liquid-glass" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
                 <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="4" result="noise" />
@@ -111,6 +115,10 @@
                     <div class="pg-editor">
                         <div class="pg-editor-bar">
                             <span>payload.json</span>
+                            <span class="pg-fold-actions">
+                                <button type="button" class="pg-fold-btn" id="pg-collapse" data-i18n="p59">Collapse all</button>
+                                <button type="button" class="pg-fold-btn" id="pg-expand" data-i18n="p60">Expand all</button>
+                            </span>
                             <span class="pg-status" id="pg-status" role="status"></span>
                         </div>
                         <textarea id="pg-json" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="SDUI payload JSON"></textarea>
@@ -322,9 +330,15 @@
         </footer>
 
         <script src="js/i18n.js?v=2"></script>
-        <script src="js/i18n-playground.js?v=6"></script>
+        <script src="js/i18n-playground.js?v=7"></script>
         <script src="js/scripts.js?v=6"></script>
-        <script src="js/sky.js?v=6"></script>
-        <script src="js/playground.js?v=8"></script>
+        <script src="js/sky.js?v=12"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+        <script src="js/playground.js?v=10"></script>
     </body>
 </html>

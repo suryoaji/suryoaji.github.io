@@ -16,6 +16,45 @@
     if (!editor || !body) return;
     var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Code editor: CodeMirror when it loaded (line numbers, bracket folding),
+    // otherwise the plain textarea underneath keeps working.
+    var cm = null;
+    if (window.CodeMirror) {
+        cm = CodeMirror.fromTextArea(editor, {
+            mode: { name: 'javascript', json: true },
+            lineNumbers: true,
+            foldGutter: true,
+            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+            matchBrackets: true,
+            tabSize: 2,
+            indentUnit: 2,
+            screenReaderLabel: 'SDUI payload JSON',
+            extraKeys: {
+                Tab: function (c) { c.replaceSelection('  '); },
+                'Ctrl-Q': function (c) { c.foldCode(c.getCursor()); }
+            }
+        });
+    }
+    function getCode() { return cm ? cm.getValue() : editor.value; }
+    function setCode(text) {
+        if (!cm) { editor.value = text; return; }
+        cm.setValue(text);
+        cm.clearHistory();
+        // Keep long payloads readable: start with the other screens folded away
+        for (var i = 0; i < cm.lineCount(); i++) {
+            if (/^  "screens": \{/.test(cm.getLine(i))) { cm.foldCode(CodeMirror.Pos(i, 0), null, 'fold'); break; }
+        }
+    }
+    // Collapse every block below the top level, so the payload reads as an outline
+    function collapseAll() {
+        if (!cm) return;
+        cm.operation(function () {
+            for (var i = cm.lineCount() - 1; i > 0; i--) {
+                if (/[\[{]\s*$/.test(cm.getLine(i))) cm.foldCode(CodeMirror.Pos(i, 0), null, 'fold');
+            }
+        });
+    }
+
     var copy = {
         en: {
             valid: function (n, bytes) { return 'Valid · ' + n + ' components · ' + bytes + ' bytes'; },
@@ -334,6 +373,18 @@
         var a = safeColor(c[0], fallback), b = safeColor(c[1], a);
         return 'linear-gradient(135deg, ' + a + ', ' + b + ')';
     }
+    // In dark mode the payload's (light) background is pulled towards iOS black,
+    // so each app theme keeps a hint of its colour
+    var lastBackground = '#ffffff';
+    function paintBackground(hex) {
+        lastBackground = hex;
+        if (root.dataset.theme !== 'dark') { screen.style.background = hex; return; }
+        var h = hex.replace('#', '');
+        if (h.length === 3) h = h.replace(/./g, '$&$&');
+        var rgb = [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16) || 255; });
+        var base = [17, 17, 20];
+        screen.style.background = 'rgb(' + rgb.map(function (v, i) { return Math.round(base[i] + (v - base[i]) * 0.1); }).join(',') + ')';
+    }
     function bindAction(node, action) {
         if (!action || typeof action !== 'object') return;
         node.classList.add('pg-tappable');
@@ -579,9 +630,9 @@
             tabbarSlot.replaceChildren(bar || '');
             screen.classList.toggle('has-tabbar', !!bar);
         }
-        screen.style.background = safeColor(target.background || lastPayload.screen.background, '#ffffff');
+        paintBackground(safeColor(target.background || lastPayload.screen.background, '#ffffff'));
         tick();
-        status.textContent = t().valid(counted, new Blob([editor.value]).size) + ' · ' + t().screen + ': ' + currentScreen;
+        status.textContent = t().valid(counted, new Blob([getCode()]).size) + ' · ' + t().screen + ': ' + currentScreen;
         status.className = 'pg-status';
     }
     function openScreen(id) {
@@ -596,7 +647,7 @@
     function update() {
         var payload;
         try {
-            payload = JSON.parse(editor.value);
+            payload = JSON.parse(getCode());
         } catch (e) {
             status.textContent = t().invalid + e.message;
             status.className = 'pg-status pg-error';
@@ -613,7 +664,21 @@
     }
 
     var timer = 0;
-    editor.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(update, 150); });
+    function schedule() { clearTimeout(timer); timer = setTimeout(update, 150); }
+    if (cm) {
+        // setValue comes from loading a preset, which renders on its own
+        cm.on('change', function (c, change) { if (change.origin !== 'setValue') schedule(); });
+    }
+    editor.addEventListener('input', schedule);
+    var collapseButton = document.getElementById('pg-collapse');
+    var expandButton = document.getElementById('pg-expand');
+    if (cm) {
+        collapseButton.addEventListener('click', collapseAll);
+        expandButton.addEventListener('click', function () { cm.execCommand('unfoldAll'); });
+    } else {
+        collapseButton.hidden = true;
+        expandButton.hidden = true;
+    }
     // Tab inserts two spaces instead of leaving the editor
     editor.addEventListener('keydown', function (e) {
         if (e.key !== 'Tab' || e.shiftKey) return;
@@ -627,7 +692,7 @@
     function load(name) {
         scenario = name;
         currentScreen = 'home';
-        editor.value = JSON.stringify(THEMES[themeSelect.value][name], null, 2);
+        setCode(JSON.stringify(THEMES[themeSelect.value][name], null, 2));
         presetButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.preset === name)); });
         update();
         scroller.scrollTop = 0;
@@ -699,6 +764,8 @@
 
     // Status and skipped-component labels follow the site language
     new MutationObserver(update).observe(root, { attributes: true, attributeFilter: ['lang'] });
+    // The phone follows the site theme: repaint the screen colour, nothing else re-renders
+    new MutationObserver(function () { paintBackground(lastBackground); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
     load('home');
     fit();
