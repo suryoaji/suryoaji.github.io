@@ -36,15 +36,56 @@ var lang = (function () {
         if (window.updateThemeLabel) window.updateThemeLabel();
     }
 
+    // Switching languages: text on screen blurs out top to bottom, swaps, then settles back in.
+    // Text off screen swaps instantly so long pages stay cheap.
+    var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var busy = false;
+
+    function onScreen(node) {
+        var r = node.getBoundingClientRect();
+        return r.width > 0 && r.bottom > 0 && r.top < window.innerHeight;
+    }
+
+    function transition(code) {
+        if (reduceMotion || !Element.prototype.animate) { apply(code); return; }
+        busy = true;
+        var shown = Array.prototype.filter.call(nodes, onScreen);
+        var stagger = function (i) { return Math.min(i * 14, 180); };
+        var out = shown.map(function (node, i) {
+            return node.animate([
+                { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' },
+                { opacity: 0, filter: 'blur(8px)', transform: 'translateY(-6px)' }
+            ], { duration: 200, delay: stagger(i), easing: 'ease-in', fill: 'forwards' }).finished;
+        });
+        button.animate([{ transform: 'rotateY(0)' }, { transform: 'rotateY(90deg)' }],
+            { duration: 180, easing: 'ease-in', fill: 'forwards' });
+
+        Promise.all(out).then(function () {
+            apply(code);
+            shown.forEach(function (node, i) {
+                node.getAnimations().forEach(function (a) { a.cancel(); });
+                node.animate([
+                    { opacity: 0, filter: 'blur(8px)', transform: 'translateY(6px)' },
+                    { opacity: 1, filter: 'blur(0)', transform: 'translateY(0)' }
+                ], { duration: 420, delay: stagger(i), easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'backwards' });
+            });
+            button.getAnimations().forEach(function (a) { a.cancel(); });
+            button.animate([{ transform: 'rotateY(-90deg)' }, { transform: 'rotateY(0)' }],
+                { duration: 380, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' });
+            setTimeout(function () { busy = false; }, 600);
+        });
+    }
+
     var lang = { current: 'en' };
     var saved = store('lang');
     var initial = saved || ((navigator.language || '').toLowerCase().indexOf('id') === 0 ? 'id' : 'en');
     if (initial === 'id') apply('id');
 
     button.addEventListener('click', function () {
+        if (busy) return;
         var next = lang.current === 'id' ? 'en' : 'id';
-        apply(next);
         store('lang', next);
+        transition(next);
     });
 
     return lang;

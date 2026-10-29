@@ -15,7 +15,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-        <link href="css/styles.css?v=19" rel="stylesheet" />
+        <link href="css/styles.css?v=26" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -27,10 +27,19 @@
         </script>
     </head>
     <body>
+        <canvas class="sky sky-page" aria-hidden="true"></canvas>
+        <canvas class="sky sky-hero" aria-hidden="true"></canvas>
+        <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+            <filter id="liquid-glass" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="4" result="noise" />
+                <feGaussianBlur in="noise" stdDeviation="2" result="soft" />
+                <feDisplacementMap in="SourceGraphic" in2="soft" scale="24" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </svg>
         <a class="skip" href="#main" data-i18n="t1">Skip to content</a>
 
         <header class="nav">
-            <div class="wrap nav-inner">
+            <div class="wrap nav-inner glass">
                 <a class="brand" href="#top">suryo<span class="accent">.</span>aji</a>
                 <div class="nav-right">
                     <nav aria-label="Sections">
@@ -53,16 +62,17 @@
         <main id="main">
             <!-- Hero -->
             <section class="hero wrap" id="top">
-                <img class="avatar" src="assets/img/profile.jpg" alt="Suryo Aji" width="96" height="96" />
+                <img class="avatar avatar-light" src="assets/img/profile-light.png" alt="Suryo Aji" width="96" height="96" />
+                <img class="avatar avatar-dark" src="assets/img/profile.jpg" alt="Suryo Aji" width="96" height="96" />
                 <p class="eyebrow">Mobile engineer · Surabaya, Indonesia</p>
                 <h1 data-i18n="t7">Built for one bar of signal.</h1>
                 <p class="lede" data-i18n="t8">I'm Suryo, and I build mobile apps that keep working when the connection doesn't. For the last five years I built lending apps for field agents in rural Indonesia. Their forms had to save offline and sync later without creating duplicates. Before that I spent five years at software agencies, on apps ranging from hotel operations for Shangri-La to a keyboard with Xendit payments built in. I write native Android in Kotlin and cross-platform apps in Flutter.</p>
 
                 <dl class="stats">
-                    <div><dt>10</dt><dd data-i18n="t9">years building mobile apps</dd></div>
-                    <div><dt>20+</dt><dd data-i18n="t10">apps built for clients and companies</dd></div>
-                    <div><dt>2</dt><dd data-i18n="t11">production apps I ran releases for</dd></div>
-                    <div><dt>8</dt><dd data-i18n="t12">years mentoring new mobile developers</dd></div>
+                    <div class="glass glass-press"><dt>10</dt><dd data-i18n="t9">years building mobile apps</dd></div>
+                    <div class="glass glass-press"><dt>20+</dt><dd data-i18n="t10">apps built for clients and companies</dd></div>
+                    <div class="glass glass-press"><dt>2</dt><dd data-i18n="t11">production apps I ran releases for</dd></div>
+                    <div class="glass glass-press"><dt>8</dt><dd data-i18n="t12">years mentoring new mobile developers</dd></div>
                 </dl>
             </section>
 
@@ -357,12 +367,16 @@
             </section>
         </main>
 
-        <footer class="footer wrap">
-            <span>© <span id="year">2026</span> Suryo Aji</span>
-            <span>WIB (UTC+7)</span>
+        <footer class="footer">
+            <canvas class="sky sky-footer" aria-hidden="true"></canvas>
+            <div class="wrap footer-inner">
+                <span>© <span id="year">2026</span> Suryo Aji</span>
+                <span>WIB (UTC+7)</span>
+            </div>
         </footer>
 
         <script src="js/i18n.js?v=1"></script>
-        <script src="js/scripts.js?v=3"></script>
+        <script src="js/scripts.js?v=4"></script>
+        <script src="js/sky.js?v=5"></script>
     </body>
 </html>
