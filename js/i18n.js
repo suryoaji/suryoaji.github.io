@@ -1,7 +1,7 @@
 // Indonesian copy for the language toggle. English lives in index.html.
 window.I18N_ID = {
     "t1": "Langsung ke konten",
-    "t2": "Pengalaman<span class=\"hide-sm\"> Kerja</span>",
+    "t2": "Pengalaman",
     "t3": "Portofolio",
     "t4": "Pendidikan",
     "t5": "Keahlian",

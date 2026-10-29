@@ -419,7 +419,6 @@ p { margin: 0; }
 /* Small screens */
 @media (max-width: 640px) {
     .nav nav { gap: 14px; }
-    .hide-sm { display: none; }
     .nav-inner { width: calc(100% - 16px); padding: 0 6px 0 14px; }
     .nav nav { gap: 12px; }
     .nav nav a { font-size: 0.8125rem; }
