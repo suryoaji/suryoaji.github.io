@@ -19,7 +19,7 @@
         <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
-        <link href="css/playground.css?v=21" rel="stylesheet" />
+        <link href="css/playground.css?v=22" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -172,6 +172,9 @@
                         <div class="sim-toolbar glass">
                             <span class="sim-lights" aria-hidden="true"><i></i><i></i><i></i></span>
                             <span class="sim-title" id="sim-title">iPhone 18 Pro</span>
+                            <button type="button" class="sim-btn" id="sim-appearance" aria-label="Toggle appearance" title="Toggle appearance" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+                            </button>
                             <button type="button" class="sim-btn" id="sim-replay" aria-label="Replay animations" title="Replay animations">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
                             </button>
@@ -339,6 +342,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-        <script src="js/playground.js?v=10"></script>
+        <script src="js/playground.js?v=12"></script>
     </body>
 </html>

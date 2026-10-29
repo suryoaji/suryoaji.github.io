@@ -64,8 +64,7 @@
             skippedNote: 'This app version has no widget for it.',
             action: 'Action: ',
             ends: 'Ended',
-            copied: 'Copied: ',
-            screen: 'screen'
+            copied: 'Copied: '
         },
         id: {
             valid: function (n, bytes) { return 'Valid · ' + n + ' komponen · ' + bytes + ' byte'; },
@@ -75,8 +74,7 @@
             skippedNote: 'Versi aplikasi ini belum punya widget untuknya.',
             action: 'Aksi: ',
             ends: 'Selesai',
-            copied: 'Disalin: ',
-            screen: 'layar'
+            copied: 'Disalin: '
         }
     };
     function t() { return copy[root.lang === 'id' ? 'id' : 'en']; }
@@ -376,9 +374,12 @@
     // In dark mode the payload's (light) background is pulled towards iOS black,
     // so each app theme keeps a hint of its colour
     var lastBackground = '#ffffff';
+    // Phone appearance: follows the site theme, unless the Simulator button flips it
+    var appearance = null;
+    function phoneDark() { return appearance !== null ? appearance === 'dark' : root.dataset.theme === 'dark'; }
     function paintBackground(hex) {
         lastBackground = hex;
-        if (root.dataset.theme !== 'dark') { screen.style.background = hex; return; }
+        if (!phoneDark()) { screen.style.background = hex; return; }
         var h = hex.replace('#', '');
         if (h.length === 3) h = h.replace(/./g, '$&$&');
         var rgb = [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16) || 255; });
@@ -632,7 +633,7 @@
         }
         paintBackground(safeColor(target.background || lastPayload.screen.background, '#ffffff'));
         tick();
-        status.textContent = t().valid(counted, new Blob([getCode()]).size) + ' · ' + t().screen + ': ' + currentScreen;
+        status.textContent = t().valid(counted, new Blob([getCode()]).size);
         status.className = 'pg-status';
     }
     function openScreen(id) {
@@ -765,7 +766,20 @@
     // Status and skipped-component labels follow the site language
     new MutationObserver(update).observe(root, { attributes: true, attributeFilter: ['lang'] });
     // The phone follows the site theme: repaint the screen colour, nothing else re-renders
-    new MutationObserver(function () { paintBackground(lastBackground); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    var appearanceButton = document.getElementById('sim-appearance');
+    var deviceFrame = document.querySelector('.pg-device');
+    function applyAppearance() {
+        deviceFrame.classList.toggle('is-dark', phoneDark());
+        appearanceButton.setAttribute('aria-pressed', String(phoneDark()));
+        paintBackground(lastBackground);
+    }
+    appearanceButton.addEventListener('click', function () {
+        appearance = phoneDark() ? 'light' : 'dark';
+        applyAppearance();
+    });
+    // Changing the site theme hands the phone back to following it
+    new MutationObserver(function () { appearance = null; applyAppearance(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    applyAppearance();
 
     load('home');
     fit();

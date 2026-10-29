@@ -552,37 +552,38 @@
 .pg-screen.has-tabbar .pg-toast { bottom: 92px; }
 .pg-screen.has-tabbar .pg-home-indicator { z-index: 3; }
 
-/* Dark mode on the phone follows the site theme, in the style of iOS dark mode.
+/* Phone dark mode (iOS style). .is-dark follows the site theme unless the
+   Simulator appearance button overrides it.
    Coloured hero, banner and card gradients stay as they are. */
-:root[data-theme="dark"] .pg-screen { color: #f2f2f7; }
-:root[data-theme="dark"] .pg-text-caption,
-:root[data-theme="dark"] .pg-list-title,
-:root[data-theme="dark"] .pg-list-item span,
-:root[data-theme="dark"] .pg-progress-caption { color: #8e8e93; }
-:root[data-theme="dark"] .pg-list-trailing { color: #f2f2f7 !important; }
-:root[data-theme="dark"] .pg-list,
-:root[data-theme="dark"] .pg-grid-tiles,
-:root[data-theme="dark"] .pg-progress { background: rgba(44, 44, 46, 0.82); }
-:root[data-theme="dark"] .pg-list-item { border-top-color: rgba(255, 255, 255, 0.08); }
-:root[data-theme="dark"] .pg-tile-icon { background: linear-gradient(160deg, #3a3a3c, #2c2c2e); box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
-:root[data-theme="dark"] .pg-tile-label { color: #d1d1d6; }
-:root[data-theme="dark"] .pg-chip-item { background: rgba(255, 255, 255, 0.1); }
-:root[data-theme="dark"] .pg-section-more { color: #0a84ff; }
-:root[data-theme="dark"] .pg-progress-track { background: rgba(255, 255, 255, 0.12); }
-:root[data-theme="dark"] .pg-progress-top span { color: #30d158; }
-:root[data-theme="dark"] .pg-button { background: #f2f2f7; color: #000; }
-:root[data-theme="dark"] .pg-button-secondary { background: transparent; color: #f2f2f7; box-shadow: inset 0 0 0 1.5px #f2f2f7; }
-:root[data-theme="dark"] .pg-countdown { background: #2c2c2e; }
-:root[data-theme="dark"] .pg-skipped { color: #ff6961; border-color: #ff6961; background: rgba(255, 69, 58, 0.12); }
-:root[data-theme="dark"] .pg-tabbar { background: rgba(28, 28, 30, 0.82); border-top-color: rgba(255, 255, 255, 0.12); }
-:root[data-theme="dark"] .pg-tab.is-active .pg-tab-label { color: #0a84ff; }
-:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-tabbar { background: rgba(44, 44, 46, 0.8); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 6px 18px -8px rgba(0, 0, 0, 0.6); }
-:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-tab.is-active { background: rgba(10, 132, 255, 0.28); }
-:root[data-theme="dark"] .pg-statusbar { color: #fff; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0)); }
-:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-statusbar { background: none; }
-:root[data-theme="dark"] .pg-device[data-device^="duo"] .pg-ring { color: #fff; }
-:root[data-theme="dark"] .pg-home-indicator { background: #fff; }
-:root[data-theme="dark"] .pg-toast { background: rgba(58, 58, 60, 0.92); }
+.pg-device.is-dark .pg-screen { color: #f2f2f7; }
+.pg-device.is-dark .pg-text-caption,
+.pg-device.is-dark .pg-list-title,
+.pg-device.is-dark .pg-list-item span,
+.pg-device.is-dark .pg-progress-caption { color: #8e8e93; }
+.pg-device.is-dark .pg-list-trailing { color: #f2f2f7 !important; }
+.pg-device.is-dark .pg-list,
+.pg-device.is-dark .pg-grid-tiles,
+.pg-device.is-dark .pg-progress { background: rgba(44, 44, 46, 0.82); }
+.pg-device.is-dark .pg-list-item { border-top-color: rgba(255, 255, 255, 0.08); }
+.pg-device.is-dark .pg-tile-icon { background: linear-gradient(160deg, #3a3a3c, #2c2c2e); box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+.pg-device.is-dark .pg-tile-label { color: #d1d1d6; }
+.pg-device.is-dark .pg-chip-item { background: rgba(255, 255, 255, 0.1); }
+.pg-device.is-dark .pg-section-more { color: #0a84ff; }
+.pg-device.is-dark .pg-progress-track { background: rgba(255, 255, 255, 0.12); }
+.pg-device.is-dark .pg-progress-top span { color: #30d158; }
+.pg-device.is-dark .pg-button { background: #f2f2f7; color: #000; }
+.pg-device.is-dark .pg-button-secondary { background: transparent; color: #f2f2f7; box-shadow: inset 0 0 0 1.5px #f2f2f7; }
+.pg-device.is-dark .pg-countdown { background: #2c2c2e; }
+.pg-device.is-dark .pg-skipped { color: #ff6961; border-color: #ff6961; background: rgba(255, 69, 58, 0.12); }
+.pg-device.is-dark .pg-tabbar { background: rgba(28, 28, 30, 0.82); border-top-color: rgba(255, 255, 255, 0.12); }
+.pg-device.is-dark .pg-tab.is-active .pg-tab-label { color: #0a84ff; }
+.pg-device.is-dark[data-device^="duo"] .pg-tabbar { background: rgba(44, 44, 46, 0.8); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 6px 18px -8px rgba(0, 0, 0, 0.6); }
+.pg-device.is-dark[data-device^="duo"] .pg-tab.is-active { background: rgba(10, 132, 255, 0.28); }
+.pg-device.is-dark .pg-statusbar { color: #fff; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0)); }
+.pg-device.is-dark[data-device^="duo"] .pg-statusbar { background: none; }
+.pg-device.is-dark[data-device^="duo"] .pg-ring { color: #fff; }
+.pg-device.is-dark .pg-home-indicator { background: #fff; }
+.pg-device.is-dark .pg-toast { background: rgba(58, 58, 60, 0.92); }
 
 /* Reference panel under the editor */
 .pg-ref { border-top: 1px solid var(--line); }
