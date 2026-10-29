@@ -64,7 +64,16 @@
             skippedNote: 'This app version has no widget for it.',
             action: 'Action: ',
             ends: 'Ended',
-            copied: 'Copied: '
+            copied: 'Copied: ',
+            fold: 'Fold',
+            unfold: 'Unfold',
+            updating: 'Updating…',
+            offline: function (ago) { return 'Offline · showing the copy saved ' + ago; },
+            offlineEmpty: 'Offline · nothing cached yet, showing the built-in screen',
+            ago: function (s) { return s < 60 ? 'just now' : Math.round(s / 60) + ' min ago'; },
+            held: 'Phone is offline: it keeps the cached copy until it reconnects',
+            linkCopied: 'Link copied: it opens this payload',
+            linkFailed: 'Could not build a link'
         },
         id: {
             valid: function (n, bytes) { return 'Valid · ' + n + ' komponen · ' + bytes + ' byte'; },
@@ -74,7 +83,16 @@
             skippedNote: 'Versi aplikasi ini belum punya widget untuknya.',
             action: 'Aksi: ',
             ends: 'Selesai',
-            copied: 'Disalin: '
+            copied: 'Disalin: ',
+            fold: 'Lipat',
+            unfold: 'Buka lipatan',
+            updating: 'Memperbarui…',
+            offline: function (ago) { return 'Offline · menampilkan salinan yang disimpan ' + ago; },
+            offlineEmpty: 'Offline · belum ada cache, menampilkan layar bawaan',
+            ago: function (s) { return s < 60 ? 'baru saja' : Math.round(s / 60) + ' menit lalu'; },
+            held: 'Ponsel offline: tetap pakai salinan cache sampai tersambung lagi',
+            linkCopied: 'Link disalin: membuka payload ini',
+            linkFailed: 'Gagal membuat link'
         }
     };
     function t() { return copy[root.lang === 'id' ? 'id' : 'en']; }
@@ -645,7 +663,9 @@
         show(true);
     }
 
-    function update() {
+    // cold: a fresh launch (preset, replay), which may show a skeleton. Edits
+    // are warm: the phone keeps its current screen while the new one loads.
+    function update(cold) {
         var payload;
         try {
             payload = JSON.parse(getCode());
@@ -660,9 +680,78 @@
             status.className = 'pg-status pg-error';
             return;
         }
-        lastPayload = payload;
-        show();
+        deliver(payload, cold === true);
     }
+    // Redraw what the phone already has (app version, language, device)
+    function rerender() { if (lastPayload) show(); }
+
+    // Network simulator. The editor plays the server: the phone only sees a
+    // payload after it downloads, and keeps the last one it got as its cache.
+    var LATENCY = { wifi: 150, '4g': 600, '3g': 2400 };
+    var NET_LABEL = { wifi: '', '4g': '4G', '3g': '3G', offline: '✈︎' };
+    var network = 'wifi';
+    var cache = null;
+    var request = 0;
+    var skeletonTimer = 0;
+    var pill = document.getElementById('pg-netpill');
+    function setPill(kind, text) {
+        pill.className = 'pg-netpill' + (kind ? ' show is-' + kind : '');
+        if (text) pill.textContent = text;
+    }
+    function showSkeleton() {
+        var tiles = '';
+        for (var i = 0; i < 8; i++) tiles += '<span class="pg-skel"></span>';
+        body.innerHTML = '<div class="pg-skel pg-skel-line"></div><div class="pg-skel pg-skel-hero"></div>' +
+            '<div class="pg-skel pg-skel-line"></div><div class="pg-skel-grid">' + tiles + '</div>' +
+            '<div class="pg-skel pg-skel-line"></div><div class="pg-skel-cards"><span class="pg-skel"></span><span class="pg-skel"></span></div>';
+        scroller.setAttribute('aria-busy', 'true');
+    }
+    function deliver(payload, cold) {
+        var id = ++request;
+        clearTimeout(skeletonTimer);
+        if (network === 'offline') {
+            // No connection: a launch falls back to the cache (or the screen
+            // bundled with the app); an edit never reaches the phone
+            if (cold || !lastPayload) {
+                lastPayload = cache ? cache.payload : THEMES[themeSelect.value].home;
+                show();
+            }
+            setPill('offline', cache ? t().offline(t().ago((Date.now() - cache.at) / 1000)) : t().offlineEmpty);
+            if (!cold) { status.textContent = t().held; status.className = 'pg-status'; }
+            return;
+        }
+        if (cold || !lastPayload) {
+            // Only show a skeleton when the download is slow enough to notice
+            skeletonTimer = setTimeout(showSkeleton, 250);
+            setPill(null);
+        } else {
+            setPill('loading', t().updating);
+        }
+        setTimeout(function () {
+            if (id !== request) return; // a newer request replaced this one
+            clearTimeout(skeletonTimer);
+            scroller.removeAttribute('aria-busy');
+            setPill(null);
+            cache = { payload: payload, at: Date.now() };
+            lastPayload = payload;
+            show();
+        }, LATENCY[network]);
+    }
+    var networkButtons = document.querySelectorAll('button[data-network]');
+    function setNetwork(id) {
+        var wasOffline = network === 'offline';
+        network = id;
+        document.querySelector('.pg-device').dataset.network = id;
+        networkButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.network === id)); });
+        document.querySelectorAll('.pg-net-label').forEach(function (n) { n.textContent = NET_LABEL[id]; });
+        document.querySelector('.pg-ring-net').textContent = NET_LABEL[id];
+        // Coming back online updates the screen in place; switching between
+        // networks relaunches so the new speed shows from the first frame
+        update(!wasOffline && id !== 'offline');
+    }
+    networkButtons.forEach(function (b) {
+        b.addEventListener('click', function () { if (b.dataset.network !== network) setNetwork(b.dataset.network); });
+    });
 
     var timer = 0;
     function schedule() { clearTimeout(timer); timer = setTimeout(update, 150); }
@@ -687,15 +776,17 @@
         editor.setRangeText('  ', editor.selectionStart, editor.selectionEnd, 'end');
         update();
     });
-    version.addEventListener('change', update);
+    version.addEventListener('change', rerender);
 
     var scenario = 'home';
     function load(name) {
         scenario = name;
+        // A preset replaces a shared payload, so drop it from the URL too
+        if (/^#p=/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
         currentScreen = 'home';
         setCode(JSON.stringify(THEMES[themeSelect.value][name], null, 2));
         presetButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.preset === name)); });
-        update();
+        update(true);
         scroller.scrollTop = 0;
     }
     presetButtons.forEach(function (b) {
@@ -707,6 +798,7 @@
     // whole frame is zoomed down when it doesn't fit the column.
     var DEVICES = {
         pro: { name: 'iPhone 18 Pro', width: 320 },
+        pixel: { name: 'Pixel 11 Pro', width: 318 },
         'duo-closed': { name: 'iPhone Duo', width: 372 },
         'duo-open': { name: 'iPhone Duo', width: 719 }
     };
@@ -721,19 +813,31 @@
         var need = DEVICES[current].width + 8;
         if (room && room < need) frame.style.zoom = (room / need).toFixed(3);
     }
+    // The Duo is one device: the toolbar fold button switches it between folded and open
+    var foldButton = document.getElementById('sim-fold');
+    var duoOpen = false;
     function setDevice(id) {
+        if (id === 'duo') id = duoOpen ? 'duo-open' : 'duo-closed';
         current = id;
         deviceBox.dataset.device = id;
         gridBox.classList.toggle('is-wide-device', id === 'duo-open');
         screen.classList.toggle('is-wide', id === 'duo-open');
         document.getElementById('sim-title').textContent = DEVICES[id].name;
-        deviceButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.device === id)); });
+        deviceButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.device === id.split('-')[0])); });
+        foldButton.hidden = id.indexOf('duo') !== 0;
+        foldButton.setAttribute('aria-pressed', String(duoOpen));
+        foldButton.title = duoOpen ? t().fold : t().unfold;
+        foldButton.setAttribute('aria-label', foldButton.title);
         fit();
         scroller.scrollTop = 0;
-        update();
+        rerender();
     }
     deviceButtons.forEach(function (b) {
         b.addEventListener('click', function () { setDevice(b.dataset.device); });
+    });
+    foldButton.addEventListener('click', function () {
+        duoOpen = !duoOpen;
+        setDevice('duo');
     });
     window.addEventListener('resize', fit);
 
@@ -743,7 +847,7 @@
     });
     document.getElementById('sim-replay').addEventListener('click', function () {
         scroller.scrollTop = 0;
-        update();
+        update(true);
     });
 
     // Reference panel: click a name to copy a snippet you can paste into the payload
@@ -764,7 +868,7 @@
     }
 
     // Status and skipped-component labels follow the site language
-    new MutationObserver(update).observe(root, { attributes: true, attributeFilter: ['lang'] });
+    new MutationObserver(rerender).observe(root, { attributes: true, attributeFilter: ['lang'] });
     // The phone follows the site theme: repaint the screen colour, nothing else re-renders
     var appearanceButton = document.getElementById('sim-appearance');
     var deviceFrame = document.querySelector('.pg-device');
@@ -781,6 +885,53 @@
     new MutationObserver(function () { appearance = null; applyAppearance(); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
     applyAppearance();
 
-    load('home');
+    // Share: the payload travels in the URL hash, deflated and base64url-encoded,
+    // so it never reaches a server and the link opens the same screen
+    function toBase64Url(bytes) {
+        var bin = '';
+        for (var i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function fromBase64Url(text) {
+        var bin = atob(text.replace(/-/g, '+').replace(/_/g, '/'));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return bytes;
+    }
+    function pipe(bytes, transform) {
+        return new Response(new Blob([bytes]).stream().pipeThrough(transform)).arrayBuffer().then(function (b) { return new Uint8Array(b); });
+    }
+    function encodePayload(text) {
+        var bytes = new TextEncoder().encode(text);
+        if (!window.CompressionStream) return Promise.resolve('u' + toBase64Url(bytes));
+        return pipe(bytes, new CompressionStream('deflate-raw')).then(function (z) { return 'z' + toBase64Url(z); });
+    }
+    function decodePayload(data) {
+        var bytes = fromBase64Url(data.slice(1));
+        var text = data[0] === 'z' ? pipe(bytes, new DecompressionStream('deflate-raw')) : Promise.resolve(bytes);
+        return text.then(function (b) { return new TextDecoder().decode(b); });
+    }
+    document.getElementById('pg-share').addEventListener('click', function () {
+        var text = getCode();
+        try { text = JSON.stringify(JSON.parse(text)); } catch (e) { /* share it as typed */ }
+        encodePayload(text).then(function (data) {
+            history.replaceState(null, '', location.pathname + location.search + '#p=' + data);
+            var done = function () { showToast(t().linkCopied); };
+            if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, done); else done();
+        }).catch(function () { showToast(t().linkFailed); });
+    });
+
+    // Opened from a shared link: start from that payload instead of a preset
+    var shared = /^#p=([A-Za-z0-9_-]+)$/.exec(location.hash);
+    if (shared) {
+        decodePayload(shared[1]).then(function (text) {
+            try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (e) { /* show it as sent */ }
+            setCode(text);
+            presetButtons.forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+            update(true);
+        }).catch(function () { load('home'); });
+    } else {
+        load('home');
+    }
     fit();
 })();

@@ -55,9 +55,12 @@ Object.assign(window.I18N_ID, {
     "p53": "Komponen dan animasi",
     "p54": "Klik sebuah nama untuk menyalin snippet, lalu tempel ke payload. Tambahkan \"animation\" ke komponen mana pun; animasi berulang tetap berjalan setelah animasi masuk.",
     "p55": "Perangkat",
-    "p56": "terlipat",
-    "p57": "terbuka",
     "p58": "Payload sama, layar lebih lebar: aplikasilah yang menentukan layout dua kolom, bukan server.",
     "p59": "Lipat semua",
-    "p60": "Buka semua"
+    "p60": "Buka semua",
+    "p61": "Jaringan",
+    "p62": "3G (lambat)",
+    "p63": "Di jaringan lambat, saat pertama dimuat muncul skeleton. Setelah itu, layar yang ada tetap tampil selama payload baru diunduh.",
+    "p64": "Saat offline, aplikasi menampilkan payload terakhir yang disimpan. Ubah JSON-nya, lalu kembali online dan lihat pembaruannya masuk.",
+    "p65": "Bagikan link"
 });
