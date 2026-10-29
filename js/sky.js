@@ -2,7 +2,8 @@
 // One WebGL shader with two scenes that cross-fade with the theme:
 //   light: daytime sky with drifting clouds that part around the pointer
 //   dark:  space with parallax stars, a slowly moving organic nebula,
-//          the odd shooting star, and a gravitational-lens bend around the pointer
+//          the odd shooting star, and a gravitational-lens bend around the pointer;
+//          and now and then an aurora
 (function () {
     var root = document.documentElement;
     var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -31,6 +32,8 @@
         'uniform float sun;',
         // wind: how far the pointer's breeze has pushed the clouds (light mode)
         'uniform vec2 wind;',
+        // aurora: progress 0..1 while one is showing, below 0 = none
+        'uniform float aurora;',
         'float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }',
         'float noise(vec2 p) {',
         '    vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);',
@@ -56,7 +59,7 @@
         '    vec3 tint = mix(vec3(0.75, 0.85, 1.0), vec3(1.0, 0.85, 0.7), hash(id + seed + 9.2));',
         '    return mix(col, mix(vec3(1.0), tint, 0.6), clamp(lit * (1.0 - calm * 0.6), 0.0, 1.0));',
         '}',
-        'vec3 space(vec2 p, vec2 aspect) {',
+        'vec3 space(vec2 p, vec2 aspect, vec2 sky) {',
         '    vec2 drift = vec2(time * 0.014, time * 0.006);',
         '    vec2 par = (mouse - 0.5) * 0.03;',
         '    vec3 col = vec3(0.043, 0.043, 0.078);',
@@ -81,6 +84,19 @@
         '    col = stars(col, p + drift * 0.4 + par * 0.3, 90.0, 0.86, 1.0);',
         '    col = stars(col, p + drift * 0.8 + par * 0.6, 48.0, 0.88, 17.0);',
         '    col = stars(col, p + drift * 1.6 + par * 1.0, 24.0, 0.95, 41.0);',
+        // Aurora: soft curtains across the top, swaying with the pointer's breeze.
+        // It only costs anything while it is showing, and uses the unbent position
+        // (sky) so the pointer's lens doesn't distort it.
+        '    if (aurora >= 0.0) {',
+        '        float env = smoothstep(0.0, 0.2, aurora) * smoothstep(1.0, 0.75, aurora);',
+        '        float ax = sky.x + wind.x * 0.25;',
+        '        float base = 0.84 + 0.06 * noise(vec2(ax * 1.1, time * 0.05)) + 0.03 * sin(ax * 2.3 + time * 0.2);',
+        '        float h = sky.y - base;',
+        '        float rays = smoothstep(0.25, 0.9, noise(vec2(ax * 9.0 + noise(vec2(ax * 1.5, time * 0.08)) * 4.0, time * 0.2)));',
+        '        float curtain = smoothstep(-0.06, 0.02, h) * exp(-max(h, 0.0) * 6.0) * (0.25 + 0.75 * rays);',
+        '        vec3 ac = mix(vec3(0.15, 0.85, 0.55), vec3(0.45, 0.30, 0.90), smoothstep(0.0, 0.25, h));',
+        '        col += ac * curtain * env * 0.4 * (1.0 - calm * 0.6);',
+        '    }',
         // A shooting star every few seconds, on a random line
         '    float period = 7.0; float k = floor(time / period); float ph = fract(time / period);',
         '    vec2 start = vec2(hash(vec2(k, 1.0)) * aspect.x, 0.6 + 0.4 * hash(vec2(k, 2.0)));',
@@ -94,10 +110,11 @@
         // One cloud layer: fbm thresholded into puffs, lit from above, shaded underneath
         'vec3 clouds(vec3 col, vec2 p, float scale, float speed, float depth, float amount, vec3 shadow, vec3 light) {',
         '    vec2 q = p * vec2(scale * 0.55, scale) + vec2(time * speed, 0.0) - wind * depth * scale * 0.55;',
-        '    float n = fbm(q);',
-        '    float cover = smoothstep(0.40, 0.62, n);',
+        // A fine noise layer roughens the edges so puffs read crisper, not blurred
+        '    float n = fbm(q) + (noise(q * 6.0) - 0.5) * 0.06;',
+        '    float cover = smoothstep(0.43, 0.58, n);',
         '    float below = fbm(q + vec2(0.0, -0.18));',
-        '    float lit = clamp(0.55 + (n - below) * 2.2, 0.0, 1.0);',
+        '    float lit = clamp(0.55 + (n - below) * 2.8, 0.0, 1.0);',
         '    vec3 puff = mix(shadow, light, lit);',
         '    return mix(col, puff, cover * amount * (1.0 - calm * 0.5));',
         '}',
@@ -153,7 +170,7 @@
         '    vec2 q = p + offset;',
         '    vec3 col = vec3(0.0);',
         // Space bends inward around the pointer, like a lens
-        '    if (night > 0.001) col = space(q - d * (0.012 + push * 0.03) * pull / (r2 + 0.01), aspect);',
+        '    if (night > 0.001) col = space(q - d * (0.012 + push * 0.03) * pull / (r2 + 0.01), aspect, q);',
         // Day has no pointer distortion; the pointer only stirs a breeze (see wind)
         '    if (night < 0.999) col = mix(day(q, uv, aspect), col, night);',
         '    gl_FragColor = vec4(col, 1.0);',
@@ -186,7 +203,7 @@
         gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
         var u = {};
-        ['res', 'time', 'mouse', 'push', 'night', 'calm', 'offset', 'sun', 'wind'].forEach(function (n) {
+        ['res', 'time', 'mouse', 'push', 'night', 'calm', 'offset', 'sun', 'wind', 'aurora'].forEach(function (n) {
             u[n] = gl.getUniformLocation(program, n);
         });
 
@@ -219,6 +236,7 @@
                 gl.uniform1f(u.calm, opts.calm || 0);
                 gl.uniform1f(u.sun, dayPhase);
                 gl.uniform2f(u.wind, wind.x, wind.y);
+                gl.uniform1f(u.aurora, auroraPhase);
                 var off = opts.offset ? opts.offset() : [0, 0];
                 gl.uniform2f(u.offset, off[0], off[1]);
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -261,13 +279,25 @@
     // The full sky sits behind the top of the page: the hero on the home page, the intro on the playground
     var hero = document.querySelector('.hero, .pg-intro');
     var heroCanvas = document.querySelector('.sky-hero');
-    if (hero && heroCanvas) skies.push(makeSky(heroCanvas, function () { return hero.offsetTop + hero.offsetHeight + 120; }));
+    // Drawn at a higher resolution than the others so cloud edges stay crisp up front
+    if (hero && heroCanvas) skies.push(makeSky(heroCanvas, function () { return hero.offsetTop + hero.offsetHeight + 120; }, {
+        scale: Math.min(window.devicePixelRatio || 1, 2) * 0.8
+    }));
     var footer = document.querySelector('.footer');
     var footerCanvas = document.querySelector('.sky-footer');
     if (footer && footerCanvas) skies.push(makeSky(footerCanvas, function () { return footer.offsetHeight; }));
     skies = skies.filter(Boolean);
     if (!skies.length) return;
     window.addEventListener('resize', function () { skies.forEach(function (s) { s.resize(); }); });
+
+    // Aurora: shows for 34 s, then the sky stays plain for 20-40 s before the next
+    // one. It only starts while the sky is dark.
+    var AURORA_LENGTH = 34, auroraStart = -1, auroraPhase = -1, nextAurora = 6;
+    function updateAurora(seconds) {
+        auroraPhase = auroraStart < 0 ? -1 : (seconds - auroraStart) / AURORA_LENGTH;
+        if (auroraPhase > 1) { auroraPhase = -1; auroraStart = -1; nextAurora = seconds + 20 + Math.random() * 20; }
+        if (auroraStart < 0 && night > 0.5 && seconds >= nextAurora) auroraStart = seconds;
+    }
 
     var start = performance.now(), frame = 0, dayPhase = 0.15;
     function drawAll(now, force) {
@@ -277,6 +307,7 @@
         var seconds = reduceMotion ? 3 : (now - start) / 1000;
         // One day every 90 seconds; with reduced motion, hold a late-morning sky
         dayPhase = reduceMotion ? 0.35 : (seconds / 90 + 0.15) % 1;
+        if (!reduceMotion) updateAurora(seconds);
         // Let the gust carry the clouds, then fade, so the sky settles back to its own drift
         gust.x = Math.max(-0.6, Math.min(0.6, gust.x)) * 0.94;
         gust.y = Math.max(-0.2, Math.min(0.2, gust.y)) * 0.94;

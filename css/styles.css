@@ -222,11 +222,9 @@ p { margin: 0; }
     object-fit: cover;
     margin-bottom: 28px;
 }
-/* Colour photo by day, the black-and-white one by night */
-.avatar-light { background: #fff; }
-.avatar-dark { display: none; filter: grayscale(1) contrast(1.05); }
-:root[data-theme="dark"] .avatar-light { display: none; }
-:root[data-theme="dark"] .avatar-dark { display: block; }
+/* One colour cut-out photo: white behind it by day, a dark backdrop by night */
+.avatar { background: #fff; }
+:root[data-theme="dark"] .avatar { background: radial-gradient(circle at 50% 30%, #34343f, #16161c 75%); }
 .hero h1 { max-width: 20ch; }
 .lede { margin-top: 20px; font-size: 1.1rem; color: var(--muted); max-width: 60ch; }
 
