@@ -1,6 +1,17 @@
 // Keep the footer year current
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// Clean URLs: links to the home page use "./", which a server opens as index.html.
+// Opened straight from disk (file://) nothing does that, so point them at index.html there.
+// And if someone lands on /index.html, drop it from the address bar.
+if (location.protocol === 'file:') {
+    document.querySelectorAll('a[href^="./"]').forEach(function (a) {
+        a.setAttribute('href', a.getAttribute('href').replace(/^\.\//, 'index.html'));
+    });
+} else if (/\/index\.html$/.test(location.pathname)) {
+    history.replaceState(null, '', location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
+}
+
 var root = document.documentElement;
 
 function store(key, value) {
@@ -17,7 +28,8 @@ var lang = (function () {
     var english = new Map();
     var meta = document.querySelector('meta[name="description"]');
     var metaEnglish = meta.content;
-    var metaIndonesian = 'Saya Suryo Aji, mobile engineer di Surabaya, Indonesia. Saya membangun aplikasi mobile dengan Kotlin dan Flutter.';
+    // Each page carries its Indonesian description in data-id
+    var metaIndonesian = meta.dataset.id || meta.content;
 
     nodes.forEach(function (node) { english.set(node, node.innerHTML); });
 
