@@ -63,6 +63,22 @@ body {
     color: var(--text);
     font: 16px/1.65 var(--sans);
     -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+a, button, [role="button"], select, summary, .btn, .link {
+    cursor: pointer;
+}
+a *, button *, [role="button"] * {
+    cursor: pointer;
+}
+
+input, textarea, [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+    cursor: text;
 }
 
 a { color: inherit; }

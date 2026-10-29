@@ -1,8 +1,8 @@
 // Sky behind the hero and the footer, plus the pointer sheen on liquid glass.
 // One WebGL shader with two scenes that cross-fade with the theme:
 //   light: daytime sky with drifting clouds that part around the pointer
-//   dark:  space with parallax stars, a faint nebula, the odd shooting star,
-//          and a gravitational-lens bend around the pointer
+//   dark:  space with parallax stars, a slowly moving organic nebula,
+//          the odd shooting star, and a gravitational-lens bend around the pointer
 (function () {
     var root = document.documentElement;
     var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -53,13 +53,27 @@
         '    return mix(col, mix(vec3(1.0), tint, 0.6), clamp(lit * (1.0 - calm * 0.6), 0.0, 1.0));',
         '}',
         'vec3 space(vec2 p, vec2 aspect) {',
-        '    vec2 drift = vec2(time * 0.006, time * 0.002);',
+        '    vec2 drift = vec2(time * 0.014, time * 0.006);',
         '    vec2 par = (mouse - 0.5) * 0.03;',
         '    vec3 col = vec3(0.043, 0.043, 0.078);',
-        // Faint nebula, kept thin so it reads as space and not smoke
-        '    float band = smoothstep(0.45, 0.85, fbm(p * 2.2 + drift * 0.5)) * smoothstep(1.2, 0.2, abs(p.y - 0.55 - 0.15 * sin(p.x * 1.3)));',
-        '    col = mix(col, vec3(0.165, 0.122, 0.302), band * 0.6 * (1.0 - calm * 0.5));',
-        '    col = mix(col, vec3(0.29, 0.141, 0.063), smoothstep(0.55, 0.9, fbm(p * 3.1 - drift)) * 0.35);',
+        // Slowly undulating organic cosmic nebula: drifting, billowing gas clouds
+        '    vec2 swirl = vec2(sin(time * 0.022 + p.y * 1.3), cos(time * 0.018 + p.x * 1.3)) * 0.14;',
+        '    vec2 q1 = p * 1.6 + drift + swirl;',
+        '    float warp = fbm(q1);',
+        '    vec2 q2 = p * 2.0 - vec2(drift.y * 1.2, drift.x * 1.2) + warp * 0.55;',
+        '    float gas1 = fbm(q2);',
+        '    float gas2 = fbm(q2 * 1.8 + vec2(1.7, 4.3) + drift * 0.6);',
+        // Celestial dust band across space
+        '    float lane = smoothstep(1.25, 0.15, abs(p.y - 0.52 - 0.20 * sin(p.x * 0.85 + time * 0.010)));',
+        '    float d1 = smoothstep(0.32, 0.78, gas1) * (0.5 + 0.5 * lane);',
+        '    float d2 = smoothstep(0.40, 0.85, gas2);',
+        // Ethereal cosmic tones: deep violet, teal/cyan edge, rose core, and amber dust
+        '    vec3 nebCol = mix(vec3(0.20, 0.08, 0.36), vec3(0.06, 0.25, 0.40), smoothstep(0.2, 0.75, gas2));',
+        '    nebCol = mix(nebCol, vec3(0.44, 0.12, 0.28), smoothstep(0.50, 0.82, gas1) * 0.75);',
+        '    nebCol = mix(nebCol, vec3(0.36, 0.18, 0.06), smoothstep(0.55, 0.88, gas2 * lane) * 0.5);',
+        '    float density = clamp(d1 * 0.85 + d2 * 0.35, 0.0, 1.0);',
+        '    float intensity = density * (0.85 - calm * 0.42);',
+        '    col += nebCol * intensity;',
         '    col = stars(col, p + drift * 0.4 + par * 0.3, 90.0, 0.86, 1.0);',
         '    col = stars(col, p + drift * 0.8 + par * 0.6, 48.0, 0.88, 17.0);',
         '    col = stars(col, p + drift * 1.6 + par * 1.0, 24.0, 0.95, 41.0);',
