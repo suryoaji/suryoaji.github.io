@@ -277,10 +277,16 @@
         offset: function () { return [0, -window.scrollY / window.innerHeight * 0.12]; }
     }));
     // The full sky sits behind the top of the page: the hero on the home page, the intro on the playground
-    var hero = document.querySelector('.hero, .pg-intro');
+    // (on the playground, the intro of whichever tab is showing)
+    function visibleHero() {
+        return Array.prototype.slice.call(document.querySelectorAll('.hero, .pg-intro')).filter(function (h) { return h.offsetParent; })[0];
+    }
     var heroCanvas = document.querySelector('.sky-hero');
     // Drawn at a higher resolution than the others so cloud edges stay crisp up front
-    if (hero && heroCanvas) skies.push(makeSky(heroCanvas, function () { return hero.offsetTop + hero.offsetHeight + 120; }, {
+    if (visibleHero() && heroCanvas) skies.push(makeSky(heroCanvas, function () {
+        var hero = visibleHero();
+        return hero ? hero.offsetTop + hero.offsetHeight + 120 : 0;
+    }, {
         scale: Math.min(window.devicePixelRatio || 1, 2) * 0.8
     }));
     var footer = document.querySelector('.footer');

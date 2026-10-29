@@ -880,7 +880,7 @@
     // Status and skipped-component labels follow the site language
     // Icon buttons show their (translated) label as a tooltip
     function iconTitles() {
-        document.querySelectorAll('.pg-icon-btn').forEach(function (b) { b.title = b.textContent.trim(); });
+        document.querySelectorAll('.pg-icon-btn, .sq-net-btn').forEach(function (b) { b.title = b.textContent.trim(); });
     }
     iconTitles();
     new MutationObserver(function () { rerender(); iconTitles(); }).observe(root, { attributes: true, attributeFilter: ['lang'] });
@@ -935,6 +935,31 @@
             if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, done); else done();
         }).catch(function () { showToast(t().linkFailed); });
     });
+
+    // Topic tabs: SDUI and offline sync. #offline-sync in the URL opens the second one.
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.pg-tab-btn'));
+    function selectTab(tab, focus) {
+        tabs.forEach(function (other) {
+            var on = other === tab;
+            other.setAttribute('aria-selected', String(on));
+            other.tabIndex = on ? 0 : -1;
+            document.getElementById(other.getAttribute('aria-controls')).hidden = !on;
+        });
+        if (focus) tab.focus();
+        var panel = tab.getAttribute('aria-controls');
+        if (!/^#p=/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search + (panel === 'sdui' ? '' : '#' + panel));
+        // A panel shown after being hidden needs measuring again: the sky, the phone and the editor
+        window.dispatchEvent(new Event('resize'));
+        if (cm) cm.refresh();
+    }
+    tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { selectTab(tab); });
+        tab.addEventListener('keydown', function (e) {
+            var move = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+            if (move) { e.preventDefault(); selectTab(tabs[(i + move + tabs.length) % tabs.length], true); }
+        });
+    });
+    if (location.hash === '#offline-sync') selectTab(tabs[1]);
 
     // Opened from a shared link: start from that payload instead of a preset
     var shared = /^#p=([A-Za-z0-9_-]+)$/.exec(location.hash);

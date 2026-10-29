@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="A hands-on playground for server-driven UI: edit a JSON payload and watch a phone redraw, plus why frontend engineers should use SDUI." data-id="Playground server-driven UI: ubah payload JSON dan lihat ponsel menggambar ulang, plus alasan frontend engineer perlu menerapkan SDUI." />
+        <meta name="description" content="Hands-on mobile playground: an offline sync queue that pauses and resumes with the signal, and server-driven UI where you edit a JSON payload and watch a phone redraw." data-id="Playground mobile: antrean sinkronisasi offline yang berhenti dan lanjut mengikuti sinyal, dan server-driven UI tempat kamu mengubah payload JSON lalu melihat ponsel menggambar ulang." />
         <meta name="author" content="Suryo Aji" />
         <meta name="color-scheme" content="light dark" />
-        <title>SDUI Playground · Suryo Aji</title>
+        <title>Playground · Suryo Aji</title>
         <link rel="icon" href="assets/img/favicon.ico" sizes="32x32" />
         <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
         <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
@@ -19,7 +19,7 @@
         <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
-        <link href="css/playground.css?v=32" rel="stylesheet" />
+        <link href="css/playground.css?v=40" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -66,301 +66,390 @@
         </header>
 
         <main id="main">
-            <!-- Intro -->
-            <section class="wrap pg-intro" id="top">
-                <p class="eyebrow">Playground · SDUI</p>
-                <h1 data-i18n="p1">Server-driven UI, hands on.</h1>
-                <p class="lede" data-i18n="p2">In a server-driven UI, the server decides what a screen shows and the app only knows how to draw it. Edit the JSON and the phone redraws, the same way a real app does when the server sends a new payload.</p>
-            </section>
-
-            <!-- Playground -->
-            <section class="wrap-wide pg" aria-label="SDUI playground">
-                <div class="pg-controls">
-                    <div class="pg-group">
-                        <span class="pg-label" data-i18n="p3">Presets</span>
-                        <div class="pg-presets" role="group">
-                            <button type="button" class="pg-chip" data-preset="home" data-umami-event="Playground preset" data-umami-event-preset="home" aria-pressed="true" data-i18n="p4">Home</button>
-                            <button type="button" class="pg-chip" data-preset="campaign" data-umami-event="Playground preset" data-umami-event-preset="campaign" aria-pressed="false" data-i18n="p5">Seasonal campaign</button>
-                            <button type="button" class="pg-chip" data-preset="experiment" data-umami-event="Playground preset" data-umami-event-preset="experiment" aria-pressed="false" data-i18n="p6">Experiment B</button>
-                            <button type="button" class="pg-chip" data-preset="countdown" data-umami-event="Playground preset" data-umami-event-preset="countdown" aria-pressed="false" data-i18n="p7">New component</button>
-                        </div>
-                    </div>
-                    <div class="pg-group">
-                        <span class="pg-label" data-i18n="p55">Device</span>
-                        <div class="pg-presets" role="group">
-                            <button type="button" class="pg-chip" data-device="pro" data-umami-event="Playground device" data-umami-event-device="pro" aria-pressed="true">iPhone 18 Pro</button>
-                            <button type="button" class="pg-chip" data-device="duo" data-umami-event="Playground device" data-umami-event-device="duo" aria-pressed="false">iPhone Duo</button>
-                            <button type="button" class="pg-chip" data-device="pixel" data-umami-event="Playground device" data-umami-event-device="pixel" aria-pressed="false">Pixel 11 Pro</button>
-                        </div>
-                    </div>
-                    <div class="pg-group">
-                        <span class="pg-label" data-i18n="p61">Network</span>
-                        <div class="pg-presets" role="group">
-                            <button type="button" class="pg-chip" data-network="wifi" data-umami-event="Playground network" data-umami-event-network="wifi" aria-pressed="true">Wi-Fi</button>
-                            <button type="button" class="pg-chip" data-network="4g" data-umami-event="Playground network" data-umami-event-network="4g" aria-pressed="false">4G</button>
-                            <button type="button" class="pg-chip" data-network="3g" data-umami-event="Playground network" data-umami-event-network="3g" aria-pressed="false" data-i18n="p62">3G (slow)</button>
-                            <button type="button" class="pg-chip" data-network="offline" data-umami-event="Playground network" data-umami-event-network="offline" aria-pressed="false">Offline</button>
-                        </div>
-                    </div>
-                    <div class="pg-selects">
-                        <div class="pg-group">
-                            <label class="pg-label" for="pg-theme" data-i18n="p47">App theme</label>
-                            <select id="pg-theme" class="pg-select">
-                                <option value="lending" data-i18n="p48">Micro-lending</option>
-                                <option value="food" data-i18n="p49">Food delivery</option>
-                                <option value="travel" data-i18n="p50">Travel</option>
-                                <option value="learning" data-i18n="p51">Online learning</option>
-                            </select>
-                        </div>
-                        <div class="pg-group">
-                            <label class="pg-label" for="pg-version" data-i18n="p8">App version</label>
-                            <select id="pg-version" class="pg-select">
-                                <option value="1" data-i18n="p9">v1 (most users)</option>
-                                <option value="2" selected data-i18n="p10">v2 (latest release)</option>
-                            </select>
-                        </div>
-                    </div>
+            <!-- Two topics on one page, one tab each -->
+            <div class="wrap pg-tabs-wrap">
+                <div class="pg-tabs" role="tablist" aria-label="Playground topics">
+                    <button type="button" class="pg-tab-btn" role="tab" id="tab-sdui" aria-controls="sdui" aria-selected="true" data-umami-event="Playground tab" data-umami-event-tab="sdui">Server-driven UI</button>
+                    <button type="button" class="pg-tab-btn" role="tab" id="tab-offline-sync" aria-controls="offline-sync" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="offline-sync" data-i18n="p87">Offline sync</button>
                 </div>
+                <button type="button" class="pg-tips pg-icon-btn" id="pg-tips" data-umami-event="Playground tips">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><circle cx="12" cy="17.6" r="0.5" fill="currentColor"/></svg>
+                    <span class="pg-sr" data-i18n="p88">Show tips</span>
+                </button>
+            </div>
 
-                <div class="pg-grid">
-                    <div class="pg-editor">
-                        <div class="pg-editor-bar">
-                            <span>payload.json</span>
-                            <span class="pg-fold-actions">
-                                <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-collapse">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 20 5-5 5 5"/><path d="m7 4 5 5 5-5"/></svg>
-                                    <span class="pg-sr" data-i18n="p59">Collapse all</span>
-                                </button>
-                                <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-expand">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
-                                    <span class="pg-sr" data-i18n="p60">Expand all</span>
-                                </button>
-                                <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-share" data-umami-event="Playground share link">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
-                                    <span class="pg-sr" data-i18n="p65">Share link</span>
-                                </button>
-                            </span>
-                            <span class="pg-status" id="pg-status" role="status"></span>
-                        </div>
-                        <textarea id="pg-json" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="SDUI payload JSON"></textarea>
-                        <details class="pg-ref">
-                            <summary data-i18n="p53">Components and animations</summary>
-                            <div class="pg-ref-body">
-                                <p class="pg-ref-note" data-i18n="p54">Click a name to copy a snippet, then paste it into the payload. Add "animation" to any component; loop animations keep playing after the entry.</p>
-                                <p class="pg-ref-label">components</p>
-                                <div class="pg-ref-chips">
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;hero&quot;, &quot;title&quot;: &quot;Hello&quot;, &quot;subtitle&quot;: &quot;Sent by the server&quot;, &quot;emoji&quot;: &quot;👋&quot;, &quot;colors&quot;: [&quot;#6d28d9&quot;, &quot;#db2777&quot;] }">hero</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;section&quot;, &quot;title&quot;: &quot;For you&quot;, &quot;actionLabel&quot;: &quot;See all&quot; }">section</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;grid&quot;, &quot;columns&quot;: 4, &quot;items&quot;: [{ &quot;emoji&quot;: &quot;📱&quot;, &quot;label&quot;: &quot;Credit&quot; }, { &quot;emoji&quot;: &quot;💡&quot;, &quot;label&quot;: &quot;Power&quot; }] }">grid</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;carousel&quot;, &quot;items&quot;: [{ &quot;title&quot;: &quot;Promo&quot;, &quot;subtitle&quot;: &quot;This week&quot;, &quot;emoji&quot;: &quot;🎁&quot;, &quot;colors&quot;: [&quot;#0ea5e9&quot;, &quot;#6366f1&quot;], &quot;badge&quot;: &quot;New&quot; }] }">carousel</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;progress&quot;, &quot;label&quot;: &quot;Profile&quot;, &quot;caption&quot;: &quot;3 of 4 steps&quot;, &quot;value&quot;: 0.75 }">progress</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;banner&quot;, &quot;title&quot;: &quot;Banner&quot;, &quot;subtitle&quot;: &quot;Gradient&quot;, &quot;color&quot;: &quot;#c2410c&quot;, &quot;color2&quot;: &quot;#db2777&quot;, &quot;emoji&quot;: &quot;✨&quot; }">banner</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;text&quot;, &quot;style&quot;: &quot;title&quot;, &quot;value&quot;: &quot;Hello&quot; }">text</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;list&quot;, &quot;title&quot;: &quot;Today&quot;, &quot;items&quot;: [{ &quot;title&quot;: &quot;Item&quot;, &quot;subtitle&quot;: &quot;Detail&quot;, &quot;trailing&quot;: &quot;Rp 10.000&quot; }] }">list</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;button&quot;, &quot;label&quot;: &quot;Continue&quot;, &quot;style&quot;: &quot;secondary&quot; }">button</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;row&quot;, &quot;children&quot;: [{ &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;One&quot; }, { &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;Two&quot; }] }">row + chip</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;tabbar&quot;, &quot;items&quot;: [{ &quot;emoji&quot;: &quot;🏠&quot;, &quot;label&quot;: &quot;Home&quot;, &quot;screen&quot;: &quot;home&quot; }, { &quot;emoji&quot;: &quot;👤&quot;, &quot;label&quot;: &quot;Me&quot;, &quot;screen&quot;: &quot;profile&quot; }] }">tabbar</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;countdown&quot;, &quot;label&quot;: &quot;Ends in&quot;, &quot;until&quot;: &quot;2026-12-31T23:59:59+07:00&quot; }">countdown · v2</button>
-                                </div>
-                                <p class="pg-ref-label">animation · entry</p>
-                                <div class="pg-ref-chips">
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;fadeUp&quot;">fadeUp</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;fadeIn&quot;">fadeIn</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;slideLeft&quot;">slideLeft</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;scaleIn&quot;">scaleIn</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;bounce&quot;">bounce</button>
-                                </div>
-                                <p class="pg-ref-label">animation · loop</p>
-                                <div class="pg-ref-chips">
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;pulse&quot;, &quot;duration&quot;: 1800 }">pulse</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;shimmer&quot;, &quot;duration&quot;: 1800 }">shimmer</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;float&quot;, &quot;duration&quot;: 1800 }">float</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;wiggle&quot;, &quot;duration&quot;: 1800 }">wiggle</button>
-                                </div>
-                                <p class="pg-ref-label">screen</p>
-                                <div class="pg-ref-chips">
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;stagger&quot;: 70">stagger</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;screens&quot;: { &quot;profile&quot;: { &quot;children&quot;: [{ &quot;type&quot;: &quot;text&quot;, &quot;style&quot;: &quot;title&quot;, &quot;value&quot;: &quot;Profile&quot; }] } }">screens</button>
-                                    <button type="button" class="pg-ref-chip" data-snippet="&quot;background&quot;: &quot;#f5f3ff&quot;">background</button>
-                                </div>
-                            </div>
-                        </details>
-                    </div>
+            <div class="pg-panel" role="tabpanel" id="sdui" aria-labelledby="tab-sdui">
+                <!-- SDUI intro -->
+                <section class="wrap pg-intro" id="top">
+                    <p class="eyebrow">Playground · SDUI</p>
+                    <h1 data-i18n="p1">Server-driven UI, hands on.</h1>
+                    <p class="lede" data-i18n="p2">In a server-driven UI, the server decides what a screen shows and the app only knows how to draw it. Edit the JSON and the phone redraws, the same way a real app does when the server sends a new payload.</p>
+                </section>
 
-                    <div class="pg-device" data-device="pro" data-network="wifi">
-                        <div class="pg-frame">
-                        <!-- iOS Simulator-style window: toolbar, then the device -->
-                        <div class="sim-toolbar glass">
-                            <span class="sim-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-                            <span class="sim-title" id="sim-title">iPhone 18 Pro</span>
-                            <button type="button" class="sim-btn" id="sim-fold" data-umami-event="Playground fold" aria-label="Unfold" title="Unfold" aria-pressed="false" hidden>
-                                <svg class="ic-folded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/></svg>
-                                <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="8.5" height="16" rx="2"/><rect x="13" y="4" width="8.5" height="16" rx="2"/></svg>
-                            </button>
-                            <button type="button" class="sim-btn" id="sim-appearance" data-umami-event="Playground appearance" aria-label="Toggle appearance" title="Toggle appearance" aria-pressed="false">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-                            </button>
-                            <button type="button" class="sim-btn" id="sim-replay" data-umami-event="Playground replay" aria-label="Replay animations" title="Replay animations">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
-                            </button>
-                            <button type="button" class="sim-btn" id="sim-home" aria-label="Home">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
-                            </button>
-                        </div>
-                        <div class="pg-phone">
-                            <span class="pg-side pg-side-action" aria-hidden="true"></span>
-                            <span class="pg-side pg-side-vol-up" aria-hidden="true"></span>
-                            <span class="pg-side pg-side-vol-down" aria-hidden="true"></span>
-                            <span class="pg-side pg-side-power" aria-hidden="true"></span>
-                            <span class="pg-side pg-side-camera" aria-hidden="true"></span>
-                            <span class="pg-back-panel" aria-hidden="true"></span>
-                            <div class="pg-bezel">
-                                <div class="pg-screen" id="pg-screen">
-                                    <div class="pg-scroll" id="pg-scroll" aria-live="polite">
-                                        <div class="pg-body" id="pg-body"></div>
-                                    </div>
-                                    <div class="pg-statusbar" aria-hidden="true">
-                                        <span class="pg-clock-ios">9:41</span>
-                                        <span class="pg-island"></span>
-                                        <span class="pg-punch"></span>
-                                        <span class="pg-ring">
-                                            <svg viewBox="0 0 40 40" aria-hidden="true">
-                                                <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="75.4 100.5" transform="rotate(135 20 20)" />
-                                                <circle class="pg-ring-level" cx="20" cy="20" r="16" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="60 100.5" transform="rotate(135 20 20)" />
-                                                <path class="pg-ring-wifi" d="M20 25.6 17.9 23.5a3 3 0 0 1 4.2 0zM15.9 21.5a5.8 5.8 0 0 1 8.2 0l-1.3 1.3a4 4 0 0 0-5.6 0zM13.9 19.5a8.6 8.6 0 0 1 12.2 0l-1.3 1.3a6.8 6.8 0 0 0-9.6 0z" fill="currentColor" />
-                                                <circle cx="15.5" cy="35.5" r="1.3" fill="currentColor" /><circle cx="18.5" cy="36.4" r="1.3" fill="currentColor" /><circle cx="21.5" cy="36.4" r="1.3" fill="currentColor" /><circle cx="24.5" cy="35.5" r="1.3" fill="currentColor" opacity="0.3" />
-                                                <text class="pg-ring-net" x="20" y="23.5" text-anchor="middle"></text>
-                                            </svg>
-                                        </span>
-                                        <span class="pg-icons">
-                                            <svg class="pg-bars" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
-                                            <span class="pg-net-label"></span>
-                                            <svg class="pg-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15.5v-2l-8-5V3.2a1.5 1.5 0 0 0-3 0v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13z"/></svg>
-                                            <svg class="pg-wifi" viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9.1a3.4 3.4 0 0 1 4.8 0zM3.4 6.9a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1.2 4.7a9.6 9.6 0 0 1 13.6 0l-1.4 1.4a7.6 7.6 0 0 0-10.8 0z"/></svg>
-                                            <svg viewBox="0 0 27 12" aria-hidden="true"><rect x="0.5" y="0.5" width="23" height="11" rx="3.5" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="17" height="8" rx="2"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity="0.4"/></svg>
-                                        </span>
-                                        <!-- Android 16 (Material 3 Expressive): segmented Wi-Fi and signal, battery with the level inside -->
-                                        <span class="pg-icons-android">
-                                            <svg class="pg-wifi" viewBox="0 0 20 15" aria-hidden="true"><path d="M10 14.5 7.03 11.53A4.2 4.2 0 0 1 12.97 11.53z"/><path d="M6.18 10.68 3.92 8.42A8.6 8.6 0 0 1 16.08 8.42L13.82 10.68A5.4 5.4 0 0 0 6.18 10.68z"/><path d="M3.07 7.57 0.38 4.88A13.6 13.6 0 0 1 19.62 4.88L16.93 7.57A9.8 9.8 0 0 0 3.07 7.57z"/></svg>
-                                            <svg class="pg-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15.5v-2l-8-5V3.2a1.5 1.5 0 0 0-3 0v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13z"/></svg>
-                                            <span class="pg-net-label"></span>
-                                            <svg class="pg-bars" viewBox="0 0 15 14" aria-hidden="true"><rect x="0" y="9" width="3" height="5" rx="1.5"/><rect x="4" y="6" width="3" height="8" rx="1.5"/><rect x="8" y="3" width="3" height="11" rx="1.5"/><rect x="12" y="0" width="3" height="14" rx="1.5"/></svg>
-                                            <span class="pg-a-battery"><b>82</b></span>
-                                        </span>
-                                    </div>
-                                    <div class="pg-tabbar-slot" id="pg-tabbar"></div>
-                                    <div class="pg-toast" id="pg-toast" role="status"></div>
-                                    <div class="pg-netpill" id="pg-netpill" role="status"></div>
-                                    <span class="pg-home-indicator" aria-hidden="true"></span>
-                                </div>
+                <!-- Playground -->
+                <section class="wrap-wide pg" aria-label="SDUI playground">
+                    <div class="pg-controls">
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p3">Presets</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-preset="home" data-umami-event="Playground preset" data-umami-event-preset="home" aria-pressed="true" data-i18n="p4">Home</button>
+                                <button type="button" class="pg-chip" data-preset="campaign" data-umami-event="Playground preset" data-umami-event-preset="campaign" aria-pressed="false" data-i18n="p5">Seasonal campaign</button>
+                                <button type="button" class="pg-chip" data-preset="experiment" data-umami-event="Playground preset" data-umami-event-preset="experiment" aria-pressed="false" data-i18n="p6">Experiment B</button>
+                                <button type="button" class="pg-chip" data-preset="countdown" data-umami-event="Playground preset" data-umami-event-preset="countdown" aria-pressed="false" data-i18n="p7">New component</button>
                             </div>
                         </div>
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p55">Device</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-device="pro" data-umami-event="Playground device" data-umami-event-device="pro" aria-pressed="true">iPhone 18 Pro</button>
+                                <button type="button" class="pg-chip" data-device="duo" data-umami-event="Playground device" data-umami-event-device="duo" aria-pressed="false">iPhone Duo</button>
+                                <button type="button" class="pg-chip" data-device="pixel" data-umami-event="Playground device" data-umami-event-device="pixel" aria-pressed="false">Pixel 11 Pro</button>
+                            </div>
                         </div>
-                        <p class="pg-hint" data-i18n="p11">Tap a banner or button: actions are data too.</p>
-                        <p class="pg-hint pg-hint-net pg-hint-slow" data-i18n="p63">On a slow network the first load shows a skeleton. After that, the current screen stays up while the new payload downloads.</p>
-                        <p class="pg-hint pg-hint-net pg-hint-offline" data-i18n="p64">Offline, the app shows the last payload it saved. Edit the JSON, then go back online and watch the update arrive.</p>
-                        <p class="pg-hint pg-hint-wide" data-i18n="p58">Same payload, wider screen: the app decides the two-column layout, not the server.</p>
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p61">Network</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-network="wifi" data-umami-event="Playground network" data-umami-event-network="wifi" aria-pressed="true">Wi-Fi</button>
+                                <button type="button" class="pg-chip" data-network="4g" data-umami-event="Playground network" data-umami-event-network="4g" aria-pressed="false">4G</button>
+                                <button type="button" class="pg-chip" data-network="3g" data-umami-event="Playground network" data-umami-event-network="3g" aria-pressed="false" data-i18n="p62">3G (slow)</button>
+                                <button type="button" class="pg-chip" data-network="offline" data-umami-event="Playground network" data-umami-event-network="offline" aria-pressed="false">Offline</button>
+                            </div>
+                        </div>
+                        <div class="pg-selects">
+                            <div class="pg-group">
+                                <label class="pg-label" for="pg-theme" data-i18n="p47">App theme</label>
+                                <select id="pg-theme" class="pg-select">
+                                    <option value="lending" data-i18n="p48">Micro-lending</option>
+                                    <option value="food" data-i18n="p49">Food delivery</option>
+                                    <option value="travel" data-i18n="p50">Travel</option>
+                                    <option value="learning" data-i18n="p51">Online learning</option>
+                                </select>
+                            </div>
+                            <div class="pg-group">
+                                <label class="pg-label" for="pg-version" data-i18n="p8">App version</label>
+                                <select id="pg-version" class="pg-select">
+                                    <option value="1" data-i18n="p9">v1 (most users)</option>
+                                    <option value="2" selected data-i18n="p10">v2 (latest release)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- How it works -->
-            <section class="section wrap">
-                <header class="section-head">
-                    <h2 data-i18n="p12">How it works</h2>
-                </header>
-                <ol class="pg-steps">
-                    <li>
-                        <span class="num">01</span>
-                        <div>
-                            <h3 data-i18n="p13">The server builds the screen</h3>
-                            <p data-i18n="p14">A backend, a CMS, or simply a JSON file in cloud storage describes the components and their content: a banner, a heading, a button. Different users, segments or experiments can get different payloads.</p>
+                    <div class="pg-grid">
+                        <div class="pg-editor">
+                            <div class="pg-editor-bar">
+                                <span>payload.json</span>
+                                <span class="pg-fold-actions">
+                                    <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-collapse">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 20 5-5 5 5"/><path d="m7 4 5 5 5-5"/></svg>
+                                        <span class="pg-sr" data-i18n="p59">Collapse all</span>
+                                    </button>
+                                    <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-expand">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+                                        <span class="pg-sr" data-i18n="p60">Expand all</span>
+                                    </button>
+                                    <button type="button" class="pg-fold-btn pg-icon-btn" id="pg-share" data-umami-event="Playground share link">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+                                        <span class="pg-sr" data-i18n="p65">Share link</span>
+                                    </button>
+                                </span>
+                                <span class="pg-status" id="pg-status" role="status"></span>
+                            </div>
+                            <textarea id="pg-json" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="SDUI payload JSON"></textarea>
+                            <details class="pg-ref">
+                                <summary data-i18n="p53">Components and animations</summary>
+                                <div class="pg-ref-body">
+                                    <p class="pg-ref-note" data-i18n="p54">Click a name to copy a snippet, then paste it into the payload. Add "animation" to any component; loop animations keep playing after the entry.</p>
+                                    <p class="pg-ref-label">components</p>
+                                    <div class="pg-ref-chips">
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;hero&quot;, &quot;title&quot;: &quot;Hello&quot;, &quot;subtitle&quot;: &quot;Sent by the server&quot;, &quot;emoji&quot;: &quot;👋&quot;, &quot;colors&quot;: [&quot;#6d28d9&quot;, &quot;#db2777&quot;] }">hero</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;section&quot;, &quot;title&quot;: &quot;For you&quot;, &quot;actionLabel&quot;: &quot;See all&quot; }">section</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;grid&quot;, &quot;columns&quot;: 4, &quot;items&quot;: [{ &quot;emoji&quot;: &quot;📱&quot;, &quot;label&quot;: &quot;Credit&quot; }, { &quot;emoji&quot;: &quot;💡&quot;, &quot;label&quot;: &quot;Power&quot; }] }">grid</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;carousel&quot;, &quot;items&quot;: [{ &quot;title&quot;: &quot;Promo&quot;, &quot;subtitle&quot;: &quot;This week&quot;, &quot;emoji&quot;: &quot;🎁&quot;, &quot;colors&quot;: [&quot;#0ea5e9&quot;, &quot;#6366f1&quot;], &quot;badge&quot;: &quot;New&quot; }] }">carousel</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;progress&quot;, &quot;label&quot;: &quot;Profile&quot;, &quot;caption&quot;: &quot;3 of 4 steps&quot;, &quot;value&quot;: 0.75 }">progress</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;banner&quot;, &quot;title&quot;: &quot;Banner&quot;, &quot;subtitle&quot;: &quot;Gradient&quot;, &quot;color&quot;: &quot;#c2410c&quot;, &quot;color2&quot;: &quot;#db2777&quot;, &quot;emoji&quot;: &quot;✨&quot; }">banner</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;text&quot;, &quot;style&quot;: &quot;title&quot;, &quot;value&quot;: &quot;Hello&quot; }">text</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;list&quot;, &quot;title&quot;: &quot;Today&quot;, &quot;items&quot;: [{ &quot;title&quot;: &quot;Item&quot;, &quot;subtitle&quot;: &quot;Detail&quot;, &quot;trailing&quot;: &quot;Rp 10.000&quot; }] }">list</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;button&quot;, &quot;label&quot;: &quot;Continue&quot;, &quot;style&quot;: &quot;secondary&quot; }">button</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;row&quot;, &quot;children&quot;: [{ &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;One&quot; }, { &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;Two&quot; }] }">row + chip</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;tabbar&quot;, &quot;items&quot;: [{ &quot;emoji&quot;: &quot;🏠&quot;, &quot;label&quot;: &quot;Home&quot;, &quot;screen&quot;: &quot;home&quot; }, { &quot;emoji&quot;: &quot;👤&quot;, &quot;label&quot;: &quot;Me&quot;, &quot;screen&quot;: &quot;profile&quot; }] }">tabbar</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;countdown&quot;, &quot;label&quot;: &quot;Ends in&quot;, &quot;until&quot;: &quot;2026-12-31T23:59:59+07:00&quot; }">countdown · v2</button>
+                                    </div>
+                                    <p class="pg-ref-label">animation · entry</p>
+                                    <div class="pg-ref-chips">
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;fadeUp&quot;">fadeUp</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;fadeIn&quot;">fadeIn</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;slideLeft&quot;">slideLeft</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;scaleIn&quot;">scaleIn</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: &quot;bounce&quot;">bounce</button>
+                                    </div>
+                                    <p class="pg-ref-label">animation · loop</p>
+                                    <div class="pg-ref-chips">
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;pulse&quot;, &quot;duration&quot;: 1800 }">pulse</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;shimmer&quot;, &quot;duration&quot;: 1800 }">shimmer</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;float&quot;, &quot;duration&quot;: 1800 }">float</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;animation&quot;: { &quot;name&quot;: &quot;wiggle&quot;, &quot;duration&quot;: 1800 }">wiggle</button>
+                                    </div>
+                                    <p class="pg-ref-label">screen</p>
+                                    <div class="pg-ref-chips">
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;stagger&quot;: 70">stagger</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;screens&quot;: { &quot;profile&quot;: { &quot;children&quot;: [{ &quot;type&quot;: &quot;text&quot;, &quot;style&quot;: &quot;title&quot;, &quot;value&quot;: &quot;Profile&quot; }] } }">screens</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="&quot;background&quot;: &quot;#f5f3ff&quot;">background</button>
+                                    </div>
+                                </div>
+                            </details>
                         </div>
-                    </li>
-                    <li>
-                        <span class="num">02</span>
-                        <div>
-                            <h3 data-i18n="p15">The app fetches and caches it</h3>
-                            <p data-i18n="p16">The app downloads the payload, keeps the last good copy, and redraws only when the payload actually changes.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="num">03</span>
-                        <div>
-                            <h3 data-i18n="p17">A renderer maps types to widgets</h3>
-                            <p data-i18n="p18">Each type points to a native widget that already ships in the app. The server can arrange them, but it cannot add new code.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="num">04</span>
-                        <div>
-                            <h3 data-i18n="p19">Unknown types fall back</h3>
-                            <p data-i18n="p20">An older app that meets a type it doesn't know skips it instead of crashing. Try the "New component" preset on v1.</p>
-                        </div>
-                    </li>
-                </ol>
-            </section>
 
-            <!-- Why -->
-            <section class="section wrap">
-                <header class="section-head">
-                    <h2 data-i18n="p21">Why frontend engineers should use it</h2>
-                </header>
-                <div class="caps">
-                    <div>
-                        <h3 data-i18n="p22">Change UI without a release</h3>
-                        <p data-i18n="p23">On mobile, a release goes through store review and then waits for people to update. With SDUI, a copy change or a new banner reaches every user the next time they open the app.</p>
+                        <div class="pg-device" data-device="pro" data-network="wifi">
+                            <div class="pg-frame">
+                            <!-- iOS Simulator-style window: toolbar, then the device -->
+                            <div class="sim-toolbar glass">
+                                <span class="sim-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+                                <span class="sim-title" id="sim-title">iPhone 18 Pro</span>
+                                <button type="button" class="sim-btn" id="sim-fold" data-umami-event="Playground fold" aria-label="Unfold" title="Unfold" aria-pressed="false" hidden>
+                                    <svg class="ic-folded" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/></svg>
+                                    <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="8.5" height="16" rx="2"/><rect x="13" y="4" width="8.5" height="16" rx="2"/></svg>
+                                </button>
+                                <button type="button" class="sim-btn" id="sim-appearance" data-umami-event="Playground appearance" aria-label="Toggle appearance" title="Toggle appearance" aria-pressed="false">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+                                </button>
+                                <button type="button" class="sim-btn" id="sim-replay" data-umami-event="Playground replay" aria-label="Replay animations" title="Replay animations">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                                </button>
+                                <button type="button" class="sim-btn" id="sim-home" aria-label="Home">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+                                </button>
+                            </div>
+                            <div class="pg-phone">
+                                <span class="pg-side pg-side-action" aria-hidden="true"></span>
+                                <span class="pg-side pg-side-vol-up" aria-hidden="true"></span>
+                                <span class="pg-side pg-side-vol-down" aria-hidden="true"></span>
+                                <span class="pg-side pg-side-power" aria-hidden="true"></span>
+                                <span class="pg-side pg-side-camera" aria-hidden="true"></span>
+                                <span class="pg-back-panel" aria-hidden="true"></span>
+                                <div class="pg-bezel">
+                                    <div class="pg-screen" id="pg-screen">
+                                        <div class="pg-scroll" id="pg-scroll" aria-live="polite">
+                                            <div class="pg-body" id="pg-body"></div>
+                                        </div>
+                                        <div class="pg-statusbar" aria-hidden="true">
+                                            <span class="pg-clock-ios">9:41</span>
+                                            <span class="pg-island"></span>
+                                            <span class="pg-punch"></span>
+                                            <span class="pg-ring">
+                                                <svg viewBox="0 0 40 40" aria-hidden="true">
+                                                    <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="75.4 100.5" transform="rotate(135 20 20)" />
+                                                    <circle class="pg-ring-level" cx="20" cy="20" r="16" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="60 100.5" transform="rotate(135 20 20)" />
+                                                    <path class="pg-ring-wifi" d="M20 25.6 17.9 23.5a3 3 0 0 1 4.2 0zM15.9 21.5a5.8 5.8 0 0 1 8.2 0l-1.3 1.3a4 4 0 0 0-5.6 0zM13.9 19.5a8.6 8.6 0 0 1 12.2 0l-1.3 1.3a6.8 6.8 0 0 0-9.6 0z" fill="currentColor" />
+                                                    <circle cx="15.5" cy="35.5" r="1.3" fill="currentColor" /><circle cx="18.5" cy="36.4" r="1.3" fill="currentColor" /><circle cx="21.5" cy="36.4" r="1.3" fill="currentColor" /><circle cx="24.5" cy="35.5" r="1.3" fill="currentColor" opacity="0.3" />
+                                                    <text class="pg-ring-net" x="20" y="23.5" text-anchor="middle"></text>
+                                                </svg>
+                                            </span>
+                                            <span class="pg-icons">
+                                                <svg class="pg-bars" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+                                                <span class="pg-net-label"></span>
+                                                <svg class="pg-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15.5v-2l-8-5V3.2a1.5 1.5 0 0 0-3 0v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13z"/></svg>
+                                                <svg class="pg-wifi" viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9.1a3.4 3.4 0 0 1 4.8 0zM3.4 6.9a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1.2 4.7a9.6 9.6 0 0 1 13.6 0l-1.4 1.4a7.6 7.6 0 0 0-10.8 0z"/></svg>
+                                                <svg viewBox="0 0 27 12" aria-hidden="true"><rect x="0.5" y="0.5" width="23" height="11" rx="3.5" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="17" height="8" rx="2"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity="0.4"/></svg>
+                                            </span>
+                                            <!-- Android 16 (Material 3 Expressive): segmented Wi-Fi and signal, battery with the level inside -->
+                                            <span class="pg-icons-android">
+                                                <svg class="pg-wifi" viewBox="0 0 20 15" aria-hidden="true"><path d="M10 14.5 7.03 11.53A4.2 4.2 0 0 1 12.97 11.53z"/><path d="M6.18 10.68 3.92 8.42A8.6 8.6 0 0 1 16.08 8.42L13.82 10.68A5.4 5.4 0 0 0 6.18 10.68z"/><path d="M3.07 7.57 0.38 4.88A13.6 13.6 0 0 1 19.62 4.88L16.93 7.57A9.8 9.8 0 0 0 3.07 7.57z"/></svg>
+                                                <svg class="pg-plane" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15.5v-2l-8-5V3.2a1.5 1.5 0 0 0-3 0v5.3l-8 5v2l8-2.5v5.2l-2 1.5V21l3.5-1 3.5 1v-1.3l-2-1.5V13z"/></svg>
+                                                <span class="pg-net-label"></span>
+                                                <svg class="pg-bars" viewBox="0 0 15 14" aria-hidden="true"><rect x="0" y="9" width="3" height="5" rx="1.5"/><rect x="4" y="6" width="3" height="8" rx="1.5"/><rect x="8" y="3" width="3" height="11" rx="1.5"/><rect x="12" y="0" width="3" height="14" rx="1.5"/></svg>
+                                                <span class="pg-a-battery"><b>82</b></span>
+                                            </span>
+                                        </div>
+                                        <div class="pg-tabbar-slot" id="pg-tabbar"></div>
+                                        <div class="pg-toast" id="pg-toast" role="status"></div>
+                                        <div class="pg-netpill" id="pg-netpill" role="status"></div>
+                                        <span class="pg-home-indicator" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <p class="pg-hint" data-i18n="p11">Tap a banner or button: actions are data too.</p>
+                            <p class="pg-hint pg-hint-net pg-hint-slow" data-i18n="p63">On a slow network the first load shows a skeleton. After that, the current screen stays up while the new payload downloads.</p>
+                            <p class="pg-hint pg-hint-net pg-hint-offline" data-i18n="p64">Offline, the app shows the last payload it saved. Edit the JSON, then go back online and watch the update arrive.</p>
+                            <p class="pg-hint pg-hint-wide" data-i18n="p58">Same payload, wider screen: the app decides the two-column layout, not the server.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 data-i18n="p24">Experiments and personalisation</h3>
-                        <p data-i18n="p25">Two segments can get two different payloads from the same build, so an A/B test doesn't need two app versions.</p>
-                    </div>
-                    <div>
-                        <h3 data-i18n="p26">One source for every platform</h3>
-                        <p data-i18n="p27">Android, iOS and web read the same schema, so a campaign is defined once and looks the same everywhere.</p>
-                    </div>
-                    <div>
-                        <h3 data-i18n="p28">Fast rollback</h3>
-                        <p data-i18n="p29">If a change goes wrong, the server sends the previous payload. Nobody waits for a hotfix build.</p>
-                    </div>
-                    <div>
-                        <h3 data-i18n="p30">Engineers stop being the bottleneck</h3>
-                        <p data-i18n="p31">Product and marketing can change content within limits the engineers set, and engineers spend their time on components instead of copy changes.</p>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Costs -->
-            <section class="section wrap">
-                <header class="section-head">
-                    <h2 data-i18n="p32">Trade-offs</h2>
-                    <p class="muted" data-i18n="p33">SDUI comes with trade-offs. It works best on screens that change often and stay fairly simple.</p>
-                </header>
-                <ul class="pg-costs">
-                    <li data-i18n="p34"><strong>Versioning.</strong> Every component has to stay compatible with apps that are months old.</li>
-                    <li data-i18n="p35"><strong>Debugging.</strong> A bug can live in the payload, the renderer or the data behind it, so you need good logging.</li>
-                    <li data-i18n="p36"><strong>Performance.</strong> Parsing and building widgets at runtime takes time. Cache the payload and skip rebuilds when nothing changed.</li>
-                    <li data-i18n="p37"><strong>Limits.</strong> The server can only use components the app already has. A truly new interaction still needs a release.</li>
-                    <li data-i18n="p38"><strong>Offline.</strong> The app needs a bundled default or a cached copy for when there is no connection.</li>
-                    <li data-i18n="p39"><strong>Safety.</strong> Treat the payload as data. Render text as text and only allow actions the app already knows.</li>
-                </ul>
-            </section>
+                <!-- How it works -->
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p12">How it works</h2>
+                    </header>
+                    <ol class="pg-steps">
+                        <li>
+                            <span class="num">01</span>
+                            <div>
+                                <h3 data-i18n="p13">The server builds the screen</h3>
+                                <p data-i18n="p14">A backend, a CMS, or simply a JSON file in cloud storage describes the components and their content: a banner, a heading, a button. Different users, segments or experiments can get different payloads.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="num">02</span>
+                            <div>
+                                <h3 data-i18n="p15">The app fetches and caches it</h3>
+                                <p data-i18n="p16">The app downloads the payload, keeps the last good copy, and redraws only when the payload actually changes.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="num">03</span>
+                            <div>
+                                <h3 data-i18n="p17">A renderer maps types to widgets</h3>
+                                <p data-i18n="p18">Each type points to a native widget that already ships in the app. The server can arrange them, but it cannot add new code.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="num">04</span>
+                            <div>
+                                <h3 data-i18n="p19">Unknown types fall back</h3>
+                                <p data-i18n="p20">An older app that meets a type it doesn't know skips it instead of crashing. Try the "New component" preset on v1.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
 
-            <!-- Lessons -->
-            <section class="section wrap">
-                <header class="section-head">
-                    <h2 data-i18n="p40">What I learned building one</h2>
-                    <p class="muted" data-i18n="p41">At Amartha I took the lending banners on the Flutter home screen from a prototype to server-driven UI in production. A few things mattered more than I expected.</p>
-                </header>
-                <ul class="pg-costs">
-                    <li data-i18n="p42"><strong>Start with one surface.</strong> Banners were a good first target: they change often, and nothing breaks if one fails to load.</li>
-                    <li data-i18n="p52"><strong>It doesn't need a paid service.</strong> The JSON lived in Firebase Storage, Remote Config told the app which file to load, and the app cached the last good copy. No new backend, no SDUI vendor, and no extra running cost.</li>
-                    <li data-i18n="p43"><strong>Keep styling out of the payload.</strong> With a central theme config, the JSON says "title", not a font size, and the app stays on brand.</li>
-                    <li data-i18n="p44"><strong>Rebuild only when the payload changes.</strong> Our first version re-parsed the banner every time the home screen rebuilt. Caching by payload removed the jank.</li>
-                    <li data-i18n="p45"><strong>Always have a fallback.</strong> Unknown types, bad JSON and failed downloads should all end in a sensible screen, never a blank one.</li>
-                </ul>
-                <p class="pg-back"><a class="link" href="./" data-i18n="p46">← Back to home</a></p>
-            </section>
+                <!-- Why -->
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p21">Why frontend engineers should use it</h2>
+                    </header>
+                    <div class="caps">
+                        <div>
+                            <h3 data-i18n="p22">Change UI without a release</h3>
+                            <p data-i18n="p23">On mobile, a release goes through store review and then waits for people to update. With SDUI, a copy change or a new banner reaches every user the next time they open the app.</p>
+                        </div>
+                        <div>
+                            <h3 data-i18n="p24">Experiments and personalisation</h3>
+                            <p data-i18n="p25">Two segments can get two different payloads from the same build, so an A/B test doesn't need two app versions.</p>
+                        </div>
+                        <div>
+                            <h3 data-i18n="p26">One source for every platform</h3>
+                            <p data-i18n="p27">Android, iOS and web read the same schema, so a campaign is defined once and looks the same everywhere.</p>
+                        </div>
+                        <div>
+                            <h3 data-i18n="p28">Fast rollback</h3>
+                            <p data-i18n="p29">If a change goes wrong, the server sends the previous payload. Nobody waits for a hotfix build.</p>
+                        </div>
+                        <div>
+                            <h3 data-i18n="p30">Engineers stop being the bottleneck</h3>
+                            <p data-i18n="p31">Product and marketing can change content within limits the engineers set, and engineers spend their time on components instead of copy changes.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Costs -->
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p32">Trade-offs</h2>
+                        <p class="muted" data-i18n="p33">SDUI comes with trade-offs. It works best on screens that change often and stay fairly simple.</p>
+                    </header>
+                    <ul class="pg-costs">
+                        <li data-i18n="p34"><strong>Versioning.</strong> Every component has to stay compatible with apps that are months old.</li>
+                        <li data-i18n="p35"><strong>Debugging.</strong> A bug can live in the payload, the renderer or the data behind it, so you need good logging.</li>
+                        <li data-i18n="p36"><strong>Performance.</strong> Parsing and building widgets at runtime takes time. Cache the payload and skip rebuilds when nothing changed.</li>
+                        <li data-i18n="p37"><strong>Limits.</strong> The server can only use components the app already has. A truly new interaction still needs a release.</li>
+                        <li data-i18n="p38"><strong>Offline.</strong> The app needs a bundled default or a cached copy for when there is no connection.</li>
+                        <li data-i18n="p39"><strong>Safety.</strong> Treat the payload as data. Render text as text and only allow actions the app already knows.</li>
+                    </ul>
+                </section>
+
+                <!-- Lessons -->
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p40">What I learned building one</h2>
+                        <p class="muted" data-i18n="p41">At Amartha I took the lending banners on the Flutter home screen from a prototype to server-driven UI in production. A few things mattered more than I expected.</p>
+                    </header>
+                    <ul class="pg-costs">
+                        <li data-i18n="p42"><strong>Start with one surface.</strong> Banners were a good first target: they change often, and nothing breaks if one fails to load.</li>
+                        <li data-i18n="p52"><strong>It doesn't need a paid service.</strong> The JSON lived in Firebase Storage, Remote Config told the app which file to load, and the app cached the last good copy. No new backend, no SDUI vendor, and no extra running cost.</li>
+                        <li data-i18n="p43"><strong>Keep styling out of the payload.</strong> With a central theme config, the JSON says "title", not a font size, and the app stays on brand.</li>
+                        <li data-i18n="p44"><strong>Rebuild only when the payload changes.</strong> Our first version re-parsed the banner every time the home screen rebuilt. Caching by payload removed the jank.</li>
+                        <li data-i18n="p45"><strong>Always have a fallback.</strong> Unknown types, bad JSON and failed downloads should all end in a sensible screen, never a blank one.</li>
+                    </ul>
+                </section>
+            </div>
+
+            <div class="pg-panel" role="tabpanel" id="offline-sync" aria-labelledby="tab-offline-sync" hidden>
+                <!-- Offline sync -->
+                <section class="wrap pg-intro">
+                    <p class="eyebrow">Playground · Offline sync</p>
+                    <h2 class="pg-title" data-i18n="p66">Work that waits for signal.</h2>
+                    <p class="lede" data-i18n="p67">A field agent keeps working with no connection. Every action goes into an outbox on the phone, runs in order, stops when the signal drops and picks up again when it comes back, without sending anything twice.</p>
+                </section>
+
+                <section class="wrap-wide sq" aria-label="Offline sync simulation">
+                    <div class="pg-controls">
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p68">Connection</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip sq-net-btn" data-sq-net="online" aria-pressed="false" data-umami-event="Sync connection" data-umami-event-to="online">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5 12.6a10 10 0 0 1 14 0"/><path d="M8.5 16.3a5 5 0 0 1 7 0"/><circle cx="12" cy="20" r="0.6" fill="currentColor"/></svg>
+                                    <span class="pg-sr">Online</span>
+                                </button>
+                                <button type="button" class="pg-chip sq-net-btn" data-sq-net="offline" aria-pressed="true" data-umami-event="Sync connection" data-umami-event-to="offline">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l20 20"/><path d="M8.5 16.3a5 5 0 0 1 7 0"/><path d="M5 12.6a10 10 0 0 1 4.2-2.5"/><path d="M19 12.6a10 10 0 0 0-2.2-1.6"/><path d="M2 8.8a15 15 0 0 1 4.4-2.9"/><path d="M10.7 5.1A15 15 0 0 1 22 8.8"/><circle cx="12" cy="20" r="0.6" fill="currentColor"/></svg>
+                                    <span class="pg-sr">Offline</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p69">Add a job</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-sq-add="visit" data-umami-event="Sync add job" data-umami-event-job="visit">📍 <span data-i18n="p70">Visit check-in</span></button>
+                                <button type="button" class="pg-chip" data-sq-add="loan" data-umami-event="Sync add job" data-umami-event-job="loan">📝 <span data-i18n="p71">Loan application</span></button>
+                                <button type="button" class="pg-chip" data-sq-add="photo" data-umami-event="Sync add job" data-umami-event-job="photo">🪪 <span data-i18n="p72">KTP photo</span></button>
+                                <button type="button" class="pg-chip" data-sq-add="repay" data-umami-event="Sync add job" data-umami-event-job="repay">💵 <span data-i18n="p73">Repayment</span></button>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p74">Server</span>
+                            <div class="pg-presets">
+                                <label class="pg-chip sq-toggle"><input type="checkbox" id="sq-idem" checked data-umami-event="Sync idempotency"> <span data-i18n="p75">Idempotency keys</span></label>
+                                <button type="button" class="pg-chip" id="sq-reset" data-umami-event="Sync reset" data-i18n="p76">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sq-grid">
+                        <div class="sq-card">
+                            <div class="sq-head"><span data-i18n="p77">outbox · on the phone</span><span class="sq-net" id="sq-net-label"></span></div>
+                            <ol class="sq-list" id="sq-jobs" aria-live="polite"></ol>
+                        </div>
+                        <div class="sq-card">
+                            <div class="sq-head"><span data-i18n="p78">server log</span><span id="sq-count"></span></div>
+                            <ol class="sq-log" id="sq-log"></ol>
+                        </div>
+                    </div>
+                    <p class="pg-hint" data-i18n="p79">Go offline while the KTP photo is uploading, or right after a job is sent. Then switch idempotency keys off and try again.</p>
+                </section>
+
+                <!-- Firestore's own queue -->
+                <section class="section wrap sq-firestore">
+                    <header class="section-head">
+                        <h2 data-i18n="p80">The queue Firestore already has</h2>
+                        <p class="muted" data-i18n="p81">You don't have to build the outbox above from scratch. Firestore keeps one for you; you mostly decide the document IDs and read the sync flag.</p>
+                    </header>
+                    <ul class="pg-costs">
+                        <li data-i18n="p82"><strong>A write queue on the phone.</strong> With offline persistence (on by default on Android and iOS, opt-in on the web), every set, update and delete lands in the local cache first and waits in a queue on disk. The screen updates right away, and the queue survives an app restart.</li>
+                        <li data-i18n="p83"><strong>Sent in order when the signal returns.</strong> The SDK sends pending writes in the order they were made. There is no retry code to write.</li>
+                        <li data-i18n="p84"><strong>"Synced" is a flag you can read.</strong> Each snapshot carries <code>hasPendingWrites</code>. Listen with metadata changes to move a row from waiting to synced. Don't await the write itself offline: it only completes when the server confirms.</li>
+                        <li data-i18n="p85"><strong>Pick the document ID on the phone.</strong> With one ID per job, a resend can only rewrite that same document; this is the idempotency key from the simulation. <code>add()</code> makes a new ID on every call, so a double tap on Submit still creates two records.</li>
+                        <li data-i18n="p86"><strong>What it doesn't cover.</strong> Transactions need the server and fail offline. Photos don't belong in Firestore (1 MiB per document): Cloud Storage uploads them in chunks and can pause and resume. Work that must finish after the app is closed still needs WorkManager on Android or a background task on iOS.</li>
+                    </ul>
+                    <pre class="sq-code"><code>// One document per job, with the ID made on the phone
+    val ref = db.collection("repayments").document(job.id)
+    ref.set(job.toMap())  // saved locally now, sent when online; don't await it offline
+
+    ref.addSnapshotListener(MetadataChanges.INCLUDE) { snap, _ -&gt;
+        job.synced = snap?.metadata?.hasPendingWrites() == false
+    }</code></pre>
+                </section>
+            </div>
         </main>
 
         <footer class="footer">
@@ -372,15 +461,17 @@
         </footer>
 
         <script src="js/i18n.js?v=2"></script>
-        <script src="js/i18n-playground.js?v=20"></script>
+        <script src="js/i18n-playground.js?v=25"></script>
         <script src="js/scripts.js?v=6"></script>
-        <script src="js/sky.js?v=16"></script>
+        <script src="js/sky.js?v=17"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-        <script src="js/playground.js?v=23"></script>
+        <script src="js/playground.js?v=25"></script>
+        <script src="js/sync-queue.js?v=4"></script>
+        <script src="js/coachmark.js?v=1"></script>
     </body>
 </html>
