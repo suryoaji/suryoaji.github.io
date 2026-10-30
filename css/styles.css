@@ -415,9 +415,6 @@ p { margin: 0; }
     text-decoration: none;
 }
 .btn:hover { background: var(--accent); }
-.btn-icon { display: inline-flex; align-items: center; gap: 8px; }
-.btn-icon svg { width: 16px; height: 16px; }
-.hero-actions { margin-top: 28px; }
 .link { font-size: 0.925rem; text-decoration: none; color: var(--muted); }
 .link:hover { color: var(--text); }
 
