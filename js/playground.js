@@ -65,6 +65,18 @@
             action: 'Action: ',
             ends: 'Ended',
             copied: 'Copied: ',
+            field: {
+                required: 'Required',
+                minLength: function (n) { return 'At least ' + n + ' characters'; },
+                maxLength: function (n) { return 'At most ' + n + ' characters'; },
+                min: function (n) { return 'Minimum ' + n; },
+                max: function (n) { return 'Maximum ' + n; },
+                email: 'Enter a valid email',
+                pattern: 'Check the format',
+                choose: 'Choose…'
+            },
+            submitted: function (to, n) { return 'submit → ' + to + ' · ' + n + ' fields valid'; },
+            fixErrors: function (n) { return n + (n === 1 ? ' field needs' : ' fields need') + ' fixing'; },
             fold: 'Fold',
             unfold: 'Unfold',
             updating: 'Updating…',
@@ -84,6 +96,18 @@
             action: 'Aksi: ',
             ends: 'Selesai',
             copied: 'Disalin: ',
+            field: {
+                required: 'Wajib diisi',
+                minLength: function (n) { return 'Minimal ' + n + ' karakter'; },
+                maxLength: function (n) { return 'Maksimal ' + n + ' karakter'; },
+                min: function (n) { return 'Minimal ' + n; },
+                max: function (n) { return 'Maksimal ' + n; },
+                email: 'Masukkan email yang valid',
+                pattern: 'Periksa formatnya',
+                choose: 'Pilih…'
+            },
+            submitted: function (to, n) { return 'submit → ' + to + ' · ' + n + ' field valid'; },
+            fixErrors: function (n) { return n + ' field perlu diperbaiki'; },
             fold: 'Lipat',
             unfold: 'Buka lipatan',
             updating: 'Memperbarui…',
@@ -106,7 +130,7 @@
     }
 
     // What each app build can draw. v2 shipped the countdown widget.
-    var BASE = ['text', 'banner', 'hero', 'section', 'grid', 'carousel', 'progress', 'row', 'chip', 'list', 'button', 'spacer', 'tabbar'];
+    var BASE = ['text', 'banner', 'hero', 'section', 'grid', 'carousel', 'progress', 'row', 'chip', 'list', 'button', 'spacer', 'tabbar', 'form'];
     var SUPPORTED = { 1: BASE, 2: BASE.concat(['countdown']) };
 
     // Animations the app knows. Entry ones play once; loop ones keep going after it.
@@ -214,6 +238,13 @@
                 tabbar
             ]) } }
         };
+        // A form is data too: fields, rules and messages come from the server,
+        // the app only knows how to draw and check each field type
+        scenarios.form = { version: 1, screen: { background: d.bg[0], stagger: 60, children: [
+            { type: 'text', style: 'caption', value: d.form.caption },
+            { type: 'text', style: 'title', value: d.form.title },
+            { type: 'form', id: d.id + '-form', fields: d.form.fields, submit: { label: d.form.submit[0], action: { type: 'submit', to: d.form.submit[1] } } }
+        ] } };
         Object.keys(scenarios).forEach(function (k) { scenarios[k].screens = screens; });
         return scenarios;
     }
@@ -239,6 +270,20 @@
             list: ['Coming up', ['Installment 16', 'Due 12 Nov', 'Rp 250.000'], ['Group meeting', 'Thursday, 09:00', 'Mawar']],
             button: { home: ['Pay installment', '/repayment'], campaign: ['Pay and get cashback', '/repayment?promo=ramadan'], experiment: ['Check my loan limit', '/loan/limit'], countdown: ['Send money', '/transfer'] },
             countdown: 'Free transfer promo ends in',
+            form: {
+                caption: 'Step 1 of 2',
+                title: 'Apply for a business loan',
+                submit: ['Apply now', 'POST /loans'],
+                fields: [
+                    { name: 'fullName', type: 'text', label: 'Full name (as on KTP)', required: true, minLength: 3 },
+                    { name: 'phone', type: 'tel', label: 'Phone number', placeholder: '08…', required: true, pattern: '^08[0-9]{8,11}$', error: { en: 'Use a number that starts with 08', id: 'Gunakan nomor yang diawali 08' } },
+                    { name: 'business', type: 'select', label: 'Business', required: true, options: ['Warung', 'Food stall', 'Tailor', 'Farming', 'Other'] },
+                    { name: 'businessOther', type: 'text', label: 'What do you sell?', required: true, showIf: { field: 'business', equals: 'Other' } },
+                    { name: 'income', type: 'number', label: 'Monthly income', prefix: 'Rp', required: true, min: 500000, help: 'Rough is fine' },
+                    { name: 'amount', type: 'select', label: 'Loan amount', required: true, options: ['Rp 3.000.000', 'Rp 5.000.000', 'Rp 10.000.000'] },
+                    { name: 'terms', type: 'checkbox', label: 'I agree to the loan terms', required: true }
+                ]
+            },
             tabs: [['🏠', 'Home', 'home'], ['📄', 'Loans', 'loans'], ['🔔', 'Inbox', 'inbox'], ['👤', 'Profile', 'profile']],
             pages: {
                 loans: { title: 'My loans', blocks: [
@@ -279,6 +324,20 @@
             list: ['Order again', ['Nasi goreng kampung', 'Warung Bu Tini', 'Rp 28.000'], ['Es kopi susu', 'Kopi Pojok', 'Rp 18.000']],
             button: { home: ['Track my order', '/orders/active'], campaign: ['Order for iftar', '/promo/iftar'], experiment: ['Browse nearby', '/nearby'], countdown: ['See the flash sale', '/promo/flash'] },
             countdown: 'Flash sale ends in',
+            form: {
+                caption: 'Checkout',
+                title: 'Where should we deliver?',
+                submit: ['Save address', 'POST /addresses'],
+                fields: [
+                    { name: 'recipient', type: 'text', label: 'Recipient name', required: true, minLength: 2 },
+                    { name: 'phone', type: 'tel', label: 'Phone number', placeholder: '08…', required: true, pattern: '^08[0-9]{8,11}$', error: { en: 'Use a number that starts with 08', id: 'Gunakan nomor yang diawali 08' } },
+                    { name: 'address', type: 'text', label: 'Street address', required: true, minLength: 10, help: 'Street, number and area' },
+                    { name: 'building', type: 'select', label: 'Building', required: true, options: ['House', 'Apartment', 'Office'] },
+                    { name: 'unit', type: 'text', label: 'Tower and unit', required: true, showIf: { field: 'building', equals: 'Apartment' } },
+                    { name: 'notes', type: 'text', label: 'Note for the driver', maxLength: 80, help: 'Optional' },
+                    { name: 'default', type: 'checkbox', label: 'Use as my default address' }
+                ]
+            },
             tabs: [['🏠', 'Home', 'home'], ['🧾', 'Orders', 'orders'], ['❤️', 'Saved', 'saved'], ['👤', 'Profile', 'profile']],
             pages: {
                 orders: { title: 'Orders', blocks: [
@@ -319,6 +378,20 @@
             list: ['Your trips', ['SUB → DPS', 'Fri 14 Nov, 07:40', 'GA 345'], ['Villa in Ubud', '2 nights from 14 Nov', 'Confirmed']],
             button: { home: ['Check in online', '/trips/checkin'], campaign: ['Plan my holiday', '/deals/holiday'], experiment: ['Search flights', '/flights/search'], countdown: ['See fares', '/deals/japan'] },
             countdown: 'Early-bird fares end in',
+            form: {
+                caption: 'SUB → DPS · Fri 14 Nov',
+                title: 'Passenger details',
+                submit: ['Continue to payment', 'POST /bookings/passengers'],
+                fields: [
+                    { name: 'title', type: 'select', label: 'Title', required: true, options: ['Mr', 'Mrs', 'Ms'] },
+                    { name: 'fullName', type: 'text', label: 'Full name (as on ID)', required: true, minLength: 3 },
+                    { name: 'birthDate', type: 'date', label: 'Date of birth', required: true },
+                    { name: 'idType', type: 'select', label: 'ID type', required: true, options: ['KTP', 'Passport'] },
+                    { name: 'passport', type: 'text', label: 'Passport number', placeholder: 'A1234567', required: true, pattern: '^[A-Z][0-9]{7}$', error: { en: 'One letter, then 7 digits', id: 'Satu huruf, lalu 7 angka' }, showIf: { field: 'idType', equals: 'Passport' } },
+                    { name: 'email', type: 'email', label: 'Email for the e-ticket', required: true },
+                    { name: 'terms', type: 'checkbox', label: 'Names match the ID exactly', required: true }
+                ]
+            },
             tabs: [['🧭', 'Explore', 'home'], ['🎫', 'Trips', 'trips'], ['💬', 'Inbox', 'inbox'], ['👤', 'Profile', 'profile']],
             pages: {
                 trips: { title: 'Trips', blocks: [
@@ -359,6 +432,19 @@
             list: ['This week', ['Live class: State in Compose', 'Wed, 19:00', 'Join'], ['Quiz: Null safety', '10 questions', '5 min']],
             button: { home: ['Resume lesson', '/lesson/resume'], campaign: ['Start a practice test', '/tests/new'], experiment: ['Browse courses', '/courses'], countdown: ['Apply now', '/scholarship/apply'] },
             countdown: 'Scholarship applications close in',
+            form: {
+                caption: 'Kotlin basics',
+                title: 'Set up your study plan',
+                submit: ['Start learning', 'POST /enrollments'],
+                fields: [
+                    { name: 'name', type: 'text', label: 'Your name', required: true, minLength: 2 },
+                    { name: 'email', type: 'email', label: 'Email', required: true },
+                    { name: 'level', type: 'select', label: 'Your level', required: true, options: ['Beginner', 'Some experience', 'Working developer'] },
+                    { name: 'hours', type: 'number', label: 'Hours per week', required: true, min: 1, max: 40 },
+                    { name: 'goal', type: 'text', label: 'What do you want to build?', maxLength: 60, help: 'Optional', showIf: { field: 'level', equals: 'Working developer' } },
+                    { name: 'reminder', type: 'checkbox', label: 'Remind me on study days' }
+                ]
+            },
             tabs: [['🏠', 'Learn', 'home'], ['📚', 'Courses', 'courses'], ['🏅', 'Progress', 'progress'], ['👤', 'Profile', 'profile']],
             pages: {
                 courses: { title: 'My courses', blocks: [
@@ -445,6 +531,146 @@
             }
         }
         node.style.animation = parts.join(', ');
+    }
+
+    // What the user typed survives re-renders (theme, language, edits elsewhere)
+    var formState = {};
+    // A message from the server can be one string or one per language: { "en": …, "id": … }
+    function localized(text) {
+        if (!text || typeof text !== 'object') return text;
+        return text[root.lang === 'id' ? 'id' : 'en'] || text.en || '';
+    }
+    function fieldError(f, value) {
+        var copy = t().field;
+        var custom = localized(f.error);
+        var empty = f.type === 'checkbox' ? value !== true : value == null || String(value).trim() === '';
+        if (empty) return f.required ? (f.type === 'checkbox' ? (custom || copy.required) : copy.required) : '';
+        if (f.type === 'checkbox') return '';
+        var text = String(value).trim();
+        if (f.minLength && text.length < f.minLength) return copy.minLength(f.minLength);
+        if (f.maxLength && text.length > f.maxLength) return copy.maxLength(f.maxLength);
+        if (f.type === 'number') {
+            var n = Number(text);
+            if (f.min != null && n < f.min) return copy.min(f.min);
+            if (f.max != null && n > f.max) return copy.max(f.max);
+        }
+        if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) return custom || copy.email;
+        if (f.pattern) {
+            var re = null;
+            try { re = new RegExp(f.pattern); } catch (e) { /* a bad pattern from the server is ignored */ }
+            if (re && !re.test(text)) return custom || copy.pattern;
+        }
+        return '';
+    }
+    function renderForm(c) {
+        var form = el('form', 'pg-form');
+        form.noValidate = true;
+        var id = String(c.id || 'form');
+        var state = formState[id] = formState[id] || {};
+        var touched = state['@touched'] = state['@touched'] || {};
+        var fields = (Array.isArray(c.fields) ? c.fields : []).filter(function (f) { return f && f.name; });
+        var rows = {};
+        function shown(f) {
+            var rule = f.showIf;
+            if (!rule || !rule.field) return true;
+            var v = state[rule.field];
+            return Array.isArray(rule.in) ? rule.in.indexOf(v) >= 0 : v === rule.equals;
+        }
+        function check(f) {
+            var row = rows[f.name];
+            var message = touched[f.name] && shown(f) ? fieldError(f, state[f.name]) : '';
+            row.error.textContent = message;
+            row.node.classList.toggle('is-invalid', !!message);
+            row.input.setAttribute('aria-invalid', String(!!message));
+            return !message;
+        }
+        function refresh() { fields.forEach(function (f) { rows[f.name].node.hidden = !shown(f); }); }
+        fields.forEach(function (f) {
+            var inputId = 'pg-f-' + id + '-' + f.name;
+            var row = el('div', 'pg-field pg-field-' + (f.type || 'text'));
+            var input;
+            if (f.type === 'checkbox') {
+                var box = el('label', 'pg-check');
+                input = el('input');
+                input.type = 'checkbox';
+                input.checked = state[f.name] === true;
+                box.appendChild(input);
+                box.appendChild(el('span', null, f.label));
+                row.appendChild(box);
+            } else {
+                var label = el('label', 'pg-field-label', f.label);
+                if (f.required) label.appendChild(el('span', 'pg-field-required', ' *'));
+                label.htmlFor = inputId;
+                row.appendChild(label);
+                box = el('div', 'pg-input');
+                if (f.prefix) box.appendChild(el('span', 'pg-input-prefix', f.prefix));
+                if (f.type === 'select') {
+                    input = el('select');
+                    var none = el('option', null, f.placeholder || t().field.choose);
+                    none.value = '';
+                    input.appendChild(none);
+                    (Array.isArray(f.options) ? f.options : []).forEach(function (o) {
+                        var opt = el('option', null, typeof o === 'object' ? o.label : o);
+                        opt.value = typeof o === 'object' ? o.value : o;
+                        input.appendChild(opt);
+                    });
+                } else {
+                    input = el('input');
+                    input.type = ['text', 'number', 'tel', 'email', 'date'].indexOf(f.type) >= 0 ? f.type : 'text';
+                    if (f.placeholder) input.placeholder = f.placeholder;
+                    // Phone numbers: digits only, with the number pad on phones
+                    if (f.type === 'number' || f.type === 'tel') input.inputMode = 'numeric';
+                    if (f.type === 'tel') input.autocomplete = 'tel';
+                }
+                input.value = state[f.name] == null ? '' : state[f.name];
+                box.appendChild(input);
+                row.appendChild(box);
+                if (f.help) row.appendChild(el('span', 'pg-field-help', f.help));
+            }
+            input.id = inputId;
+            input.name = f.name;
+            var error = el('span', 'pg-field-error');
+            error.setAttribute('aria-live', 'polite');
+            row.appendChild(error);
+            rows[f.name] = { node: row, input: input, error: error };
+            // Errors appear once a field is left, then update while typing
+            input.addEventListener(f.type === 'checkbox' || f.type === 'select' ? 'change' : 'input', function () {
+                if (f.type === 'tel' && /\D/.test(input.value)) {
+                    // Drop anything that isn't a digit, keeping the caret where it was
+                    var caret = input.selectionStart - (input.value.slice(0, input.selectionStart).match(/\D/g) || []).length;
+                    input.value = input.value.replace(/\D/g, '');
+                    input.setSelectionRange(caret, caret);
+                }
+                state[f.name] = f.type === 'checkbox' ? input.checked : input.value;
+                if (f.type === 'checkbox' || f.type === 'select') touched[f.name] = true;
+                refresh();
+                check(f);
+            });
+            input.addEventListener('blur', function () { touched[f.name] = true; check(f); });
+            form.appendChild(row);
+        });
+        refresh();
+        fields.forEach(function (f) { if (touched[f.name]) check(f); });
+        var submit = c.submit && typeof c.submit === 'object' ? c.submit : {};
+        var button = el('button', 'pg-button', submit.label || 'Submit');
+        button.type = 'submit';
+        form.appendChild(button);
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var bad = [];
+            fields.forEach(function (f) {
+                touched[f.name] = true;
+                if (!check(f)) bad.push(f);
+            });
+            if (bad.length) {
+                showToast(t().fixErrors(bad.length));
+                rows[bad[0].name].input.focus();
+                return;
+            }
+            var action = submit.action || {};
+            showToast(t().submitted(action.to || '?', fields.filter(shown).length));
+        });
+        return form;
     }
 
     var counted = 0;
@@ -568,6 +794,9 @@
             case 'spacer':
                 node = el('div');
                 node.style.height = Math.max(0, Math.min(64, Number(c.height) || 12)) + 'px';
+                break;
+            case 'form':
+                node = renderForm(c);
                 break;
             case 'countdown':
                 node = el('div', 'pg-countdown');
@@ -936,7 +1165,7 @@
         }).catch(function () { showToast(t().linkFailed); });
     });
 
-    // Topic tabs: SDUI and offline sync. #offline-sync in the URL opens the second one.
+    // Topic tabs. A panel id in the URL (#offline-sync, #frame-budget) opens that tab.
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.pg-tab-btn'));
     function selectTab(tab, focus) {
         tabs.forEach(function (other) {
@@ -959,7 +1188,7 @@
             if (move) { e.preventDefault(); selectTab(tabs[(i + move + tabs.length) % tabs.length], true); }
         });
     });
-    if (location.hash === '#offline-sync') selectTab(tabs[1]);
+    tabs.forEach(function (tab) { if (location.hash === '#' + tab.getAttribute('aria-controls') && tab !== tabs[0]) selectTab(tab); });
 
     // Opened from a shared link: start from that payload instead of a preset
     var shared = /^#p=([A-Za-z0-9_-]+)$/.exec(location.hash);

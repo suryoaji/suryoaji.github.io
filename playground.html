@@ -19,7 +19,7 @@
         <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
-        <link href="css/playground.css?v=40" rel="stylesheet" />
+        <link href="css/playground.css?v=46" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -71,6 +71,7 @@
                 <div class="pg-tabs" role="tablist" aria-label="Playground topics">
                     <button type="button" class="pg-tab-btn" role="tab" id="tab-sdui" aria-controls="sdui" aria-selected="true" data-umami-event="Playground tab" data-umami-event-tab="sdui">Server-driven UI</button>
                     <button type="button" class="pg-tab-btn" role="tab" id="tab-offline-sync" aria-controls="offline-sync" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="offline-sync" data-i18n="p87">Offline sync</button>
+                    <button type="button" class="pg-tab-btn" role="tab" id="tab-frame-budget" aria-controls="frame-budget" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="frame-budget" data-i18n="p90">Frame budget</button>
                 </div>
                 <button type="button" class="pg-tips pg-icon-btn" id="pg-tips" data-umami-event="Playground tips">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><circle cx="12" cy="17.6" r="0.5" fill="currentColor"/></svg>
@@ -96,6 +97,7 @@
                                 <button type="button" class="pg-chip" data-preset="campaign" data-umami-event="Playground preset" data-umami-event-preset="campaign" aria-pressed="false" data-i18n="p5">Seasonal campaign</button>
                                 <button type="button" class="pg-chip" data-preset="experiment" data-umami-event="Playground preset" data-umami-event-preset="experiment" aria-pressed="false" data-i18n="p6">Experiment B</button>
                                 <button type="button" class="pg-chip" data-preset="countdown" data-umami-event="Playground preset" data-umami-event-preset="countdown" aria-pressed="false" data-i18n="p7">New component</button>
+                                <button type="button" class="pg-chip" data-preset="form" data-umami-event="Playground preset" data-umami-event-preset="form" aria-pressed="false" data-i18n="p89">Form</button>
                             </div>
                         </div>
                         <div class="pg-group">
@@ -174,6 +176,7 @@
                                         <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;row&quot;, &quot;children&quot;: [{ &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;One&quot; }, { &quot;type&quot;: &quot;chip&quot;, &quot;label&quot;: &quot;Two&quot; }] }">row + chip</button>
                                         <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;tabbar&quot;, &quot;items&quot;: [{ &quot;emoji&quot;: &quot;🏠&quot;, &quot;label&quot;: &quot;Home&quot;, &quot;screen&quot;: &quot;home&quot; }, { &quot;emoji&quot;: &quot;👤&quot;, &quot;label&quot;: &quot;Me&quot;, &quot;screen&quot;: &quot;profile&quot; }] }">tabbar</button>
                                         <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;countdown&quot;, &quot;label&quot;: &quot;Ends in&quot;, &quot;until&quot;: &quot;2026-12-31T23:59:59+07:00&quot; }">countdown · v2</button>
+                                        <button type="button" class="pg-ref-chip" data-snippet="{ &quot;type&quot;: &quot;form&quot;, &quot;id&quot;: &quot;signup&quot;, &quot;fields&quot;: [{ &quot;name&quot;: &quot;email&quot;, &quot;type&quot;: &quot;email&quot;, &quot;label&quot;: &quot;Email&quot;, &quot;required&quot;: true }, { &quot;name&quot;: &quot;plan&quot;, &quot;type&quot;: &quot;select&quot;, &quot;label&quot;: &quot;Plan&quot;, &quot;options&quot;: [&quot;Free&quot;, &quot;Pro&quot;] }, { &quot;name&quot;: &quot;team&quot;, &quot;type&quot;: &quot;text&quot;, &quot;label&quot;: &quot;Team name&quot;, &quot;minLength&quot;: 2, &quot;showIf&quot;: { &quot;field&quot;: &quot;plan&quot;, &quot;equals&quot;: &quot;Pro&quot; } }], &quot;submit&quot;: { &quot;label&quot;: &quot;Sign up&quot;, &quot;action&quot;: { &quot;type&quot;: &quot;submit&quot;, &quot;to&quot;: &quot;POST /signups&quot; } } }">form</button>
                                     </div>
                                     <p class="pg-ref-label">animation · entry</p>
                                     <div class="pg-ref-chips">
@@ -450,6 +453,83 @@
     }</code></pre>
                 </section>
             </div>
+
+            <div class="pg-panel" role="tabpanel" id="frame-budget" aria-labelledby="tab-frame-budget" hidden>
+                <section class="wrap pg-intro">
+                    <p class="eyebrow">Playground · Frame budget</p>
+                    <h2 class="pg-title" data-i18n="p91">Smooth is a time budget.</h2>
+                    <p class="lede" data-i18n="p92">At 60 Hz the app has 16.7 ms to draw each frame, at 120 Hz only 8.3 ms. Put slow work on the main thread and frames miss the deadline, so the list stutters. Move it to a background thread and scrolling stays smooth.</p>
+                </section>
+
+                <section class="wrap-wide fb" aria-label="Frame budget simulation">
+                    <div class="pg-controls">
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p93">Refresh rate</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-fb-hz="60" aria-pressed="true" data-umami-event="Frame refresh rate" data-umami-event-hz="60">60 Hz</button>
+                                <button type="button" class="pg-chip" data-fb-hz="120" aria-pressed="false" data-umami-event="Frame refresh rate" data-umami-event-hz="120">120 Hz</button>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p94">Heavy work runs on</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-fb-thread="main" aria-pressed="true" data-umami-event="Frame thread" data-umami-event-thread="main" data-i18n="p95">Main thread</button>
+                                <button type="button" class="pg-chip" data-fb-thread="background" aria-pressed="false" data-umami-event="Frame thread" data-umami-event-thread="background" data-i18n="p96">Background</button>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <label class="pg-label" for="fb-work" data-i18n="p97">Work per new row</label>
+                            <div class="fb-slider">
+                                <input type="range" id="fb-work" min="0" max="40" step="1" value="14">
+                                <output id="fb-work-out" for="fb-work">14 ms</output>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <span class="pg-label" aria-hidden="true">&nbsp;</span>
+                            <button type="button" class="pg-chip pg-icon-btn fb-play" id="fb-play" aria-pressed="true">
+                                <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+                                <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+                                <span class="pg-sr" id="fb-play-label">Pause</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="fb-grid">
+                        <div class="fb-phone" aria-hidden="true">
+                            <div class="fb-screen">
+                                <div class="fb-list" id="fb-list"></div>
+                                <span class="fb-fps" id="fb-fps"></span>
+                            </div>
+                        </div>
+                        <div class="sq-card fb-card">
+                            <div class="sq-head"><span data-i18n="p98">frame times · last 2 seconds</span><span id="fb-stats"></span></div>
+                            <canvas class="fb-chart" id="fb-chart" role="img" aria-label="Frame time chart"></canvas>
+                            <div class="fb-legend"><span class="fb-ok" data-i18n="p99">on time</span><span class="fb-late" data-i18n="p100">missed the budget</span><span class="fb-line" id="fb-budget"></span></div>
+                        </div>
+                    </div>
+                    <p class="pg-hint" data-i18n="p101">Raise the work with the main thread selected and watch the list stutter, then switch to background. At 120 Hz, work that fits 60 Hz (try 8 to 12 ms) starts to miss.</p>
+                </section>
+
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p102">What keeps a real app smooth</h2>
+                    </header>
+                    <ul class="pg-costs">
+                        <li data-i18n="p103"><strong>Keep bind and build cheap.</strong> <code>onBindViewHolder</code>, a Compose item or a Flutter <code>build()</code> should only put values on screen. Parse, format and sort before the list asks for a row.</li>
+                        <li data-i18n="p104"><strong>Move heavy work off the main thread.</strong> In Kotlin use <code>withContext(Dispatchers.Default)</code>; in Flutter use <code>Isolate.run</code> for big JSON. Show a placeholder until the result arrives.</li>
+                        <li data-i18n="p108"><strong><code>async</code> is not a background thread.</strong> A Kotlin coroutine launched from <code>viewModelScope</code> runs on the main thread until <code>withContext</code> moves it. In Dart, <code>await</code> only waits: all code in an isolate shares the UI thread, which is fine for network calls but not for heavy CPU work.</li>
+                        <li data-i18n="p105"><strong>Decode images at the size you show them.</strong> A 4000 px photo in a 48 px avatar wastes decode time and memory. Coil, Glide and Flutter's <code>cacheWidth</code> handle this.</li>
+                        <li data-i18n="p106"><strong>Measure release builds on a real phone.</strong> Debug builds are slower. Use the Android Studio profiler or Perfetto, or the performance view in Flutter DevTools, and look for frames over the budget.</li>
+                        <li data-i18n="p107"><strong>120 Hz halves the budget.</strong> Work that fit at 60 Hz can start dropping frames on a 120 Hz phone.</li>
+                    </ul>
+                    <pre class="sq-code"><code>// Kotlin: parse off the main thread, then hand the rows to the list
+val rows = withContext(Dispatchers.Default) { parseFeed(json) }
+adapter.submitList(rows)
+
+// Flutter: the same idea with an isolate
+final rows = await Isolate.run(() =&gt; parseFeed(json));
+setState(() =&gt; items = rows);</code></pre>
+                </section>
+            </div>
         </main>
 
         <footer class="footer">
@@ -461,7 +541,7 @@
         </footer>
 
         <script src="js/i18n.js?v=2"></script>
-        <script src="js/i18n-playground.js?v=25"></script>
+        <script src="js/i18n-playground.js?v=28"></script>
         <script src="js/scripts.js?v=6"></script>
         <script src="js/sky.js?v=17"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -470,8 +550,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-        <script src="js/playground.js?v=25"></script>
+        <script src="js/playground.js?v=29"></script>
         <script src="js/sync-queue.js?v=4"></script>
-        <script src="js/coachmark.js?v=1"></script>
+        <script src="js/frame-budget.js?v=2"></script>
+        <script src="js/coachmark.js?v=2"></script>
     </body>
 </html>

@@ -44,6 +44,20 @@
             { target: one('.sq-toggle'),
               en: ['Break it on purpose', 'Switch idempotency keys off, cut the signal right after a job is sent, and the server writes it twice.'],
               id: ['Coba rusak dengan sengaja', 'Matikan idempotency key, putuskan sinyal tepat setelah job terkirim, dan server akan mencatatnya dua kali.'] }
+        ],
+        'frame-budget': [
+            { target: group('button[data-fb-hz]'),
+              en: ['Pick a screen', 'At 60 Hz each frame has 16.7 ms; at 120 Hz only 8.3 ms.'],
+              id: ['Pilih layarnya', 'Di 60 Hz setiap frame punya 16,7 ms; di 120 Hz hanya 8,3 ms.'] },
+            { target: group('button[data-fb-thread]'),
+              en: ['Where the work runs', 'Main thread: the work lands inside the frame. Background: the frame stays cheap and the row waits for its data.'],
+              id: ['Di mana pekerjaannya jalan', 'Main thread: pekerjaan masuk ke dalam frame. Background: frame tetap ringan dan baris menunggu datanya.'] },
+            { target: one('#fb-work'),
+              en: ['Make each row heavier', 'This is the time one new row costs, like parsing or decoding an image.'],
+              id: ['Buat setiap baris lebih berat', 'Ini waktu yang dibutuhkan satu baris baru, seperti parsing atau decode gambar.'] },
+            { target: one('.fb-card'),
+              en: ['Read the chart', 'Each bar is one frame. Red bars missed the dashed budget line, so the list skipped a beat.'],
+              id: ['Baca grafiknya', 'Setiap batang adalah satu frame. Batang merah melewati garis anggaran, jadi daftarnya tersendat.'] }
         ]
     };
     var COPY = {
