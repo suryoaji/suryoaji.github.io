@@ -1165,21 +1165,71 @@
         }).catch(function () { showToast(t().linkFailed); });
     });
 
-    // Topic tabs. A panel id in the URL (#offline-sync, #frame-budget) opens that tab.
+    // Topic tabs. A panel id in the URL (#offline-sync, #frame-budget, #optimistic-ui) opens that tab.
+    // Switching: a pill slides under the chosen tab, the old panel fades out
+    // towards the side you came from, and the new one slides in from the other.
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.pg-tab-btn'));
-    function selectTab(tab, focus) {
+    var tabBar = tabs[0].parentElement;
+    var tabsWrap = tabBar.parentElement;
+    var tabPill = el('span', 'pg-tab-pill');
+    tabPill.setAttribute('aria-hidden', 'true');
+    tabBar.insertBefore(tabPill, tabBar.firstChild);
+    function panelOf(tab) { return document.getElementById(tab.getAttribute('aria-controls')); }
+    function selectedTab() { return tabs.filter(function (tab) { return tab.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]; }
+    function movePill() {
+        var tab = selectedTab();
+        tabPill.style.width = tab.offsetWidth + 'px';
+        tabPill.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+    }
+    var leaving = null;
+    function showPanel(dir, instant) {
+        var tab = selectedTab();
+        var target = panelOf(tab);
+        tabs.forEach(function (other) { panelOf(other).hidden = other !== tab; });
+        // Coming from further down the page: land at the tabs, not in the middle of the new panel
+        var top = tabsWrap.getBoundingClientRect().top;
+        if (top < 0) window.scrollTo({ top: window.scrollY + top - 90, behavior: 'instant' });
+        // A panel shown after being hidden needs measuring again: the sky, the phone and the editor
+        window.dispatchEvent(new Event('resize'));
+        if (cm) cm.refresh();
+        if (!instant && !reduceMotion && target.animate) {
+            target.animate([
+                { opacity: 0, transform: 'translateX(' + (24 * dir) + 'px)' },
+                { opacity: 1, transform: 'none' }
+            ], { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+        }
+    }
+    function selectTab(tab, focus, instant) {
+        var from = selectedTab();
+        if (tab === from && !instant) return;
+        var dir = tabs.indexOf(tab) >= tabs.indexOf(from) ? 1 : -1;
         tabs.forEach(function (other) {
             var on = other === tab;
             other.setAttribute('aria-selected', String(on));
             other.tabIndex = on ? 0 : -1;
-            document.getElementById(other.getAttribute('aria-controls')).hidden = !on;
         });
-        if (focus) tab.focus();
+        if (focus) tab.focus({ preventScroll: true });
+        movePill();
+        // On a narrow screen the tab row scrolls; bring the chosen tab to the middle
+        if (tabBar.scrollWidth > tabBar.clientWidth) tabBar.scrollTo({ left: tab.offsetLeft - (tabBar.clientWidth - tab.offsetWidth) / 2, behavior: instant ? 'auto' : 'smooth' });
         var panel = tab.getAttribute('aria-controls');
         if (!/^#p=/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search + (panel === 'sdui' ? '' : '#' + panel));
-        // A panel shown after being hidden needs measuring again: the sky, the phone and the editor
-        window.dispatchEvent(new Event('resize'));
-        if (cm) cm.refresh();
+        // A quick second tap skips the rest of the first fade
+        if (leaving) { clearTimeout(leaving.timer); leaving.fade.cancel(); leaving = null; }
+        var old = panelOf(from);
+        if (instant || reduceMotion || !old.animate || old.hidden) { showPanel(dir, instant); return; }
+        // The swap runs on a timer, so it happens even if the animation is paused (background tab)
+        leaving = {
+            fade: old.animate([
+                { opacity: 1, transform: 'none' },
+                { opacity: 0, transform: 'translateX(' + (-16 * dir) + 'px)' }
+            ], { duration: 150, easing: 'ease-in', fill: 'forwards' }),
+            timer: setTimeout(function () {
+                leaving.fade.cancel();
+                leaving = null;
+                showPanel(dir);
+            }, 150)
+        };
     }
     tabs.forEach(function (tab, i) {
         tab.addEventListener('click', function () { selectTab(tab); });
@@ -1188,7 +1238,12 @@
             if (move) { e.preventDefault(); selectTab(tabs[(i + move + tabs.length) % tabs.length], true); }
         });
     });
-    tabs.forEach(function (tab) { if (location.hash === '#' + tab.getAttribute('aria-controls') && tab !== tabs[0]) selectTab(tab); });
+    tabs.forEach(function (tab) { if (location.hash === '#' + tab.getAttribute('aria-controls') && tab !== tabs[0]) selectTab(tab, false, true); });
+    movePill();
+    // Labels change width with the language and the font loading in; keep the tabPill under its tab
+    if (window.ResizeObserver) new ResizeObserver(movePill).observe(tabBar);
+    tabs.forEach(function (tab) { if (window.ResizeObserver) new ResizeObserver(movePill).observe(tab); });
+    requestAnimationFrame(function () { tabPill.classList.add('is-ready'); });
 
     // Opened from a shared link: start from that payload instead of a preset
     var shared = /^#p=([A-Za-z0-9_-]+)$/.exec(location.hash);

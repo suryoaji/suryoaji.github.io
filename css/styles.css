@@ -113,11 +113,28 @@ p { margin: 0; }
     padding-top: 10px;
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 52px; border-radius: 999px; padding: 0 8px 0 20px; }
-.brand { font: 500 0.95rem var(--mono); text-decoration: none; }
-.nav nav { display: flex; gap: 20px; }
+.brand { flex: none; font: 500 0.95rem var(--mono); text-decoration: none; }
+/* Links scroll sideways when the capsule is too narrow; the edges fade where more is hidden */
+.nav nav {
+    position: relative;
+    display: flex;
+    gap: 20px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    --fade-left: 0px;
+    --fade-right: 0px;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade-left), #000 calc(100% - var(--fade-right)), transparent);
+}
+.nav nav::-webkit-scrollbar { display: none; }
+.nav nav.can-left { --fade-left: 20px; }
+.nav nav.can-right { --fade-right: 20px; }
 .nav nav a { font-size: 0.875rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .nav nav a:hover { color: var(--text); }
-.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-right { display: flex; align-items: center; justify-content: flex-end; gap: 20px; min-width: 0; }
+.nav-right > button { flex: none; }
 
 /* Theme toggle */
 .theme-toggle {
@@ -424,21 +441,12 @@ p { margin: 0; }
 }
 :root[data-theme="dark"] .footer { color: #b9b6ae; }
 
-/* Narrower desktops: drop the two least-used links so the capsule fits */
-@media (max-width: 900px) {
-    .nav nav a[href$="#experience"],
-    .nav nav a[href$="#capabilities"] { display: none; }
-}
-
 /* Small screens */
 @media (max-width: 640px) {
-    .nav nav { gap: 14px; }
     .nav-inner { width: calc(100% - 16px); padding: 0 6px 0 14px; }
     .nav nav { gap: 12px; }
     .nav nav a { font-size: 0.8125rem; }
     .nav-right { gap: 14px; }
-    .nav nav a[href$="#capabilities"],
-    .nav nav a[href$="#experience"] { display: none; }
     .app-card { grid-template-columns: 1fr; padding: 20px; gap: 14px; }
     .shots { margin: 0 -20px -20px; padding: 4px 20px 20px; }
     .shots img { height: 260px; }
@@ -455,8 +463,3 @@ p { margin: 0; }
     .awards .muted { grid-column: 1; grid-row: 2; text-align: left; }
 }
 
-/* Phones: two toggles leave room for only two section links */
-@media (max-width: 420px) {
-    .nav nav a[href$="#contact"],
-    .nav nav a[href$="#work"] { display: none; }
-}

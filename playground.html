@@ -15,11 +15,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-        <link href="css/styles.css?v=32" rel="stylesheet" />
+        <link href="css/styles.css?v=33" rel="stylesheet" />
         <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
-        <link href="css/playground.css?v=46" rel="stylesheet" />
+        <link href="css/playground.css?v=49" rel="stylesheet" />
         <script>
             // Apply the theme before first paint so there is no flash
             (function () {
@@ -72,6 +72,7 @@
                     <button type="button" class="pg-tab-btn" role="tab" id="tab-sdui" aria-controls="sdui" aria-selected="true" data-umami-event="Playground tab" data-umami-event-tab="sdui">Server-driven UI</button>
                     <button type="button" class="pg-tab-btn" role="tab" id="tab-offline-sync" aria-controls="offline-sync" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="offline-sync" data-i18n="p87">Offline sync</button>
                     <button type="button" class="pg-tab-btn" role="tab" id="tab-frame-budget" aria-controls="frame-budget" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="frame-budget" data-i18n="p90">Frame budget</button>
+                    <button type="button" class="pg-tab-btn" role="tab" id="tab-optimistic-ui" aria-controls="optimistic-ui" aria-selected="false" tabindex="-1" data-umami-event="Playground tab" data-umami-event-tab="optimistic-ui" data-i18n="p109">Optimistic UI</button>
                 </div>
                 <button type="button" class="pg-tips pg-icon-btn" id="pg-tips" data-umami-event="Playground tips">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4"/><circle cx="12" cy="17.6" r="0.5" fill="currentColor"/></svg>
@@ -530,6 +531,82 @@ final rows = await Isolate.run(() =&gt; parseFeed(json));
 setState(() =&gt; items = rows);</code></pre>
                 </section>
             </div>
+
+            <div class="pg-panel" role="tabpanel" id="optimistic-ui" aria-labelledby="tab-optimistic-ui" hidden>
+                <section class="wrap pg-intro">
+                    <p class="eyebrow">Playground · Optimistic UI</p>
+                    <h2 class="pg-title" data-i18n="p110">Show it now, confirm it later.</h2>
+                    <p class="lede" data-i18n="p111">Waiting for the server makes every tap feel slow. An optimistic app changes the screen right away, sends the request in the background, and undoes the change with a clear message if the server says no.</p>
+                </section>
+
+                <section class="wrap-wide ou" aria-label="Optimistic UI simulation">
+                    <div class="pg-controls">
+                        <div class="pg-group">
+                            <span class="pg-label" data-i18n="p112">The app</span>
+                            <div class="pg-presets" role="group">
+                                <button type="button" class="pg-chip" data-ou-mode="optimistic" aria-pressed="true" data-umami-event="Optimistic mode" data-umami-event-mode="optimistic" data-i18n="p113">Updates right away</button>
+                                <button type="button" class="pg-chip" data-ou-mode="wait" aria-pressed="false" data-umami-event="Optimistic mode" data-umami-event-mode="wait" data-i18n="p114">Waits for the server</button>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <label class="pg-label" for="ou-latency" data-i18n="p115">Server reply time</label>
+                            <div class="fb-slider">
+                                <input type="range" id="ou-latency" min="100" max="3000" step="100" value="1200">
+                                <output id="ou-latency-out" for="ou-latency">1.2 s</output>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <label class="pg-label" for="ou-fail" data-i18n="p116">Requests that fail</label>
+                            <div class="fb-slider">
+                                <input type="range" id="ou-fail" min="0" max="100" step="5" value="30">
+                                <output id="ou-fail-out" for="ou-fail">30%</output>
+                            </div>
+                        </div>
+                        <div class="pg-group">
+                            <span class="pg-label" aria-hidden="true">&nbsp;</span>
+                            <button type="button" class="pg-chip" id="ou-reset" data-umami-event="Optimistic reset" data-i18n="p76">Reset</button>
+                        </div>
+                    </div>
+                    <div class="fb-grid">
+                        <div class="fb-phone">
+                            <div class="fb-screen ou-screen">
+                                <div class="ou-app" id="ou-app"></div>
+                                <div class="ou-toast" id="ou-toast" role="status"></div>
+                            </div>
+                        </div>
+                        <div class="sq-card ou-card">
+                            <div class="sq-head"><span data-i18n="p117">requests</span><span id="ou-stats"></span></div>
+                            <ol class="sq-log" id="ou-log"></ol>
+                        </div>
+                    </div>
+                    <p class="pg-hint" data-i18n="p118">Tap the hearts quickly, delete a post, then pay the bill. Compare how each tap feels in both modes.</p>
+                </section>
+
+                <section class="section wrap">
+                    <header class="section-head">
+                        <h2 data-i18n="p119">When to be optimistic</h2>
+                    </header>
+                    <ul class="pg-costs">
+                        <li data-i18n="p120"><strong>Cheap to undo, usually succeeds.</strong> Likes, saves, mark as read, reorder and delete-with-undo are good fits. The user sees the result at once and almost never sees a rollback.</li>
+                        <li data-i18n="p121"><strong>Never for money.</strong> Payments, transfers and bookings wait for the server and show progress. Showing "Paid" and taking it back later breaks trust.</li>
+                        <li data-i18n="p122"><strong>Keep the confirmed value apart.</strong> Store what the server last confirmed next to what the screen shows. After several quick taps, a failed request rolls back to the confirmed value, not to whatever was on screen.</li>
+                        <li data-i18n="p123"><strong>Say what happened.</strong> A rollback without a message looks like a bug. Put the item back where it was and tell the user why, with a way to try again.</li>
+                        <li data-i18n="p124"><strong>It works with an offline queue.</strong> An optimistic change can wait in the outbox from the Offline sync tab; the same idempotency key keeps the retry safe.</li>
+                    </ul>
+                    <pre class="sq-code"><code>// Kotlin: show the like now, roll back only this post if the request fails
+fun toggleLike(id: String) {
+    val wasLiked = posts.value.first { it.id == id }.liked
+    _posts.update { list -&gt; list.setLiked(id, !wasLiked) }
+    viewModelScope.launch {
+        runCatching { api.setLiked(id, !wasLiked) }
+            .onFailure {
+                _posts.update { list -&gt; list.setLiked(id, wasLiked) }
+                _messages.emit(Message.LikeFailed(id))
+            }
+    }
+}</code></pre>
+                </section>
+            </div>
         </main>
 
         <footer class="footer">
@@ -541,8 +618,8 @@ setState(() =&gt; items = rows);</code></pre>
         </footer>
 
         <script src="js/i18n.js?v=2"></script>
-        <script src="js/i18n-playground.js?v=28"></script>
-        <script src="js/scripts.js?v=6"></script>
+        <script src="js/i18n-playground.js?v=29"></script>
+        <script src="js/scripts.js?v=7"></script>
         <script src="js/sky.js?v=17"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
@@ -550,9 +627,10 @@ setState(() =&gt; items = rows);</code></pre>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-        <script src="js/playground.js?v=29"></script>
+        <script src="js/playground.js?v=34"></script>
         <script src="js/sync-queue.js?v=4"></script>
         <script src="js/frame-budget.js?v=2"></script>
-        <script src="js/coachmark.js?v=2"></script>
+        <script src="js/optimistic.js?v=1"></script>
+        <script src="js/coachmark.js?v=4"></script>
     </body>
 </html>

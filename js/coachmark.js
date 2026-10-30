@@ -58,6 +58,20 @@
             { target: one('.fb-card'),
               en: ['Read the chart', 'Each bar is one frame. Red bars missed the dashed budget line, so the list skipped a beat.'],
               id: ['Baca grafiknya', 'Setiap batang adalah satu frame. Batang merah melewati garis anggaran, jadi daftarnya tersendat.'] }
+        ],
+        'optimistic-ui': [
+            { target: group('button[data-ou-mode]'),
+              en: ['Two ways to react', 'Update the screen right away, or wait for the server before showing anything.'],
+              id: ['Dua cara merespons', 'Ubah layar langsung, atau tunggu server sebelum menampilkan apa pun.'] },
+            { target: one('#ou-fail'),
+              en: ['Make the server unreliable', 'Raise the failure rate to see rollbacks; raise the reply time to feel the wait.'],
+              id: ['Buat server tidak stabil', 'Naikkan tingkat kegagalan untuk melihat rollback; naikkan waktu balasan untuk merasakan menunggu.'] },
+            { target: one('.ou-screen'),
+              en: ['Tap around', 'Hearts and delete are optimistic. The bill always waits, because money should.'],
+              id: ['Coba ketuk', 'Tombol suka dan hapus bersifat optimis. Tagihan selalu menunggu, karena urusan uang memang harus begitu.'] },
+            { target: one('.ou-card'),
+              en: ['What really happened', 'Every request, how long it took, and whether the screen had to be rolled back.'],
+              id: ['Apa yang sebenarnya terjadi', 'Setiap request, berapa lama, dan apakah layarnya harus dikembalikan.'] }
         ]
     };
     var COPY = {
@@ -179,7 +193,7 @@
         if (!seen(tabName)) open(tabName);
     }
     document.querySelectorAll('.pg-tab-btn').forEach(function (tab) {
-        tab.addEventListener('click', function () { setTimeout(maybeOpen, 350); });
+        tab.addEventListener('click', function () { setTimeout(maybeOpen, 600); });
     });
     var tipsButton = document.getElementById('pg-tips');
     if (tipsButton) tipsButton.addEventListener('click', function () { open(activeTab()); });

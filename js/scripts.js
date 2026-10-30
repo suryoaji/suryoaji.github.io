@@ -135,3 +135,20 @@ var lang = (function () {
         if (!store('theme')) apply(e.matches ? 'dark' : 'light');
     });
 })();
+
+// Header links scroll sideways on narrow screens: fade the edge that has more
+// links behind it, and start with the current page's link in view
+(function () {
+    var bar = document.querySelector('.nav nav');
+    if (!bar) return;
+    function edges() {
+        bar.classList.toggle('can-left', bar.scrollLeft > 2);
+        bar.classList.toggle('can-right', bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 2);
+    }
+    var current = bar.querySelector('[aria-current="page"]');
+    if (current && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = current.offsetLeft - (bar.clientWidth - current.offsetWidth) / 2;
+    bar.addEventListener('scroll', edges, { passive: true });
+    window.addEventListener('resize', edges);
+    if (window.ResizeObserver) new ResizeObserver(edges).observe(bar);
+    edges();
+})();

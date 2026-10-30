@@ -104,5 +104,21 @@ Object.assign(window.I18N_ID, {
     "p105": "<strong>Decode gambar sesuai ukuran tampilnya.</strong> Foto 4000 px di avatar 48 px membuang waktu decode dan memori. Coil, Glide, dan <code>cacheWidth</code> di Flutter sudah menangani ini.",
     "p106": "<strong>Ukur build release di ponsel asli.</strong> Build debug lebih lambat. Pakai profiler Android Studio atau Perfetto, atau tampilan performance di Flutter DevTools, lalu cari frame yang melewati anggaran.",
     "p107": "<strong>120 Hz memotong anggaran jadi separuh.</strong> Pekerjaan yang cukup di 60 Hz bisa mulai menjatuhkan frame di ponsel 120 Hz.",
-    "p108": "<strong><code>async</code> bukan background thread.</strong> Coroutine Kotlin yang dijalankan dari <code>viewModelScope</code> tetap di main thread sampai <code>withContext</code> memindahkannya. Di Dart, <code>await</code> hanya menunggu: semua kode dalam satu isolate berbagi thread UI, aman untuk panggilan jaringan tapi tidak untuk pekerjaan berat CPU."
+    "p108": "<strong><code>async</code> bukan background thread.</strong> Coroutine Kotlin yang dijalankan dari <code>viewModelScope</code> tetap di main thread sampai <code>withContext</code> memindahkannya. Di Dart, <code>await</code> hanya menunggu: semua kode dalam satu isolate berbagi thread UI, aman untuk panggilan jaringan tapi tidak untuk pekerjaan berat CPU.",
+    "p109": "UI optimis",
+    "p110": "Tampilkan dulu, pastikan belakangan.",
+    "p111": "Menunggu server membuat setiap ketukan terasa lambat. Aplikasi yang optimis langsung mengubah layar, mengirim request di belakang, lalu membatalkan perubahannya dengan pesan yang jelas kalau server menolak.",
+    "p112": "Aplikasinya",
+    "p113": "Langsung berubah",
+    "p114": "Menunggu server",
+    "p115": "Waktu balasan server",
+    "p116": "Request yang gagal",
+    "p117": "request",
+    "p118": "Ketuk tombol suka dengan cepat, hapus satu postingan, lalu bayar tagihannya. Bandingkan rasanya di kedua mode.",
+    "p119": "Kapan boleh optimis",
+    "p120": "<strong>Mudah dibatalkan, biasanya berhasil.</strong> Suka, simpan, tandai sudah dibaca, ubah urutan, dan hapus-dengan-undo cocok untuk pola ini. Pengguna langsung melihat hasilnya dan hampir tidak pernah melihat rollback.",
+    "p121": "<strong>Jangan untuk uang.</strong> Pembayaran, transfer, dan pemesanan menunggu server sambil menampilkan progres. Menampilkan \"Lunas\" lalu menariknya kembali merusak kepercayaan.",
+    "p122": "<strong>Simpan nilai yang sudah dikonfirmasi secara terpisah.</strong> Simpan nilai terakhir yang dikonfirmasi server di samping yang tampil di layar. Setelah beberapa ketukan cepat, request yang gagal kembali ke nilai yang dikonfirmasi, bukan ke apa pun yang sedang tampil.",
+    "p123": "<strong>Jelaskan apa yang terjadi.</strong> Rollback tanpa pesan terlihat seperti bug. Kembalikan item ke posisinya dan beri tahu alasannya, dengan cara untuk mencoba lagi.",
+    "p124": "<strong>Bisa digabung dengan antrean offline.</strong> Perubahan optimis bisa menunggu di outbox dari tab Sinkronisasi offline; idempotency key yang sama membuat pengiriman ulangnya aman."
 });
