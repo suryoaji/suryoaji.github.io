@@ -94,5 +94,8 @@ window.I18N_ID = {
     "t92": "Semifinalis",
     "t93": "Juara 2",
     "t94": "Cara termudah menghubungi saya adalah lewat email.",
-    "t95": "Kirim email"
+    "t95": "Kirim email",
+    "t96": "Terbuka untuk kerja · Mobile Engineer · full-time, remote",
+    "t97": "Unduh CV",
+    "t98": "Hubungi saya →"
 };

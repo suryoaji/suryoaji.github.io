@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <meta name="color-scheme" content="light dark" />
+        <title>Page not found · Suryo Aji</title>
+        <!-- GitHub Pages serves this file for any missing path, so every URL here is absolute -->
+        <link rel="icon" href="/assets/img/favicon.ico" sizes="32x32" />
+        <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="/css/styles.css?v=35" rel="stylesheet" />
+        <script>
+            (function () {
+                var saved = null, lang = null;
+                try { saved = localStorage.getItem('theme'); lang = localStorage.getItem('lang'); } catch (e) {}
+                var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+                if ((lang || navigator.language || '').slice(0, 2) === 'id') document.documentElement.lang = 'id';
+            })();
+        </script>
+        <style>
+            .lost { min-height: 100vh; display: grid; place-items: center; padding: 40px 20px; text-align: center; }
+            .lost-code { font: 500 0.8rem var(--mono); letter-spacing: 0.1em; color: var(--accent); }
+            .lost h1 { margin-top: 14px; }
+            .lost p { margin: 14px auto 28px; max-width: 42ch; color: var(--muted); }
+            .lost-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 20px; }
+            [lang="id"] .en, [lang="en"] .id { display: none; }
+        </style>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="f2b177f6-0411-4b99-9e5b-e8010869854e" data-domains="suryoaji.github.io"></script>
+    </head>
+    <body>
+        <main class="lost">
+            <div>
+                <p class="lost-code">404</p>
+                <h1><span class="en">No screen here.</span><span class="id">Tidak ada layar di sini.</span></h1>
+                <p>
+                    <span class="en">This link points to a page that doesn't exist, or doesn't anymore.</span>
+                    <span class="id">Link ini mengarah ke halaman yang tidak ada, atau sudah tidak ada lagi.</span>
+                </p>
+                <div class="lost-links">
+                    <a class="btn" href="/"><span class="en">Go to the home page</span><span class="id">Ke halaman utama</span></a>
+                    <a class="link" href="/playground.html"><span class="en">Open the playground</span><span class="id">Buka playground</span> ↗</a>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

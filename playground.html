@@ -3,19 +3,31 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Hands-on mobile playground: an offline sync queue that pauses and resumes with the signal, and server-driven UI where you edit a JSON payload and watch a phone redraw." data-id="Playground mobile: antrean sinkronisasi offline yang berhenti dan lanjut mengikuti sinyal, dan server-driven UI tempat kamu mengubah payload JSON lalu melihat ponsel menggambar ulang." />
+        <meta name="description" content="Hands-on mobile playground: server-driven UI with a live JSON editor, an offline sync queue, frame budgets at 60 and 120 Hz, and optimistic UI with rollback." data-id="Playground mobile: server-driven UI dengan editor JSON langsung, antrean sinkronisasi offline, anggaran frame di 60 dan 120 Hz, serta UI optimis dengan rollback." />
         <meta name="author" content="Suryo Aji" />
         <meta name="color-scheme" content="light dark" />
         <title>Playground · Suryo Aji</title>
         <link rel="icon" href="assets/img/favicon.ico" sizes="32x32" />
         <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
         <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+        <link rel="canonical" href="https://suryoaji.github.io/playground.html" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Suryo Aji" />
+        <meta property="og:title" content="Mobile playground · Suryo Aji" />
+        <meta property="og:description" content="Try server-driven UI, an offline sync queue, frame budgets and optimistic UI on simulated phones, right in the browser." />
+        <meta property="og:url" content="https://suryoaji.github.io/playground.html" />
+        <meta property="og:image" content="https://suryoaji.github.io/assets/img/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Suryo Aji, Mobile Engineer. Built for one bar of signal." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:creator" content="@suryoajiw" />
         <meta name="theme-color" content="#fbfaf8" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-        <link href="css/styles.css?v=33" rel="stylesheet" />
+        <link href="css/styles.css?v=35" rel="stylesheet" />
         <!-- Code editor with folding (CodeMirror 5). Without it the playground falls back to a plain textarea. -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet" />
@@ -617,7 +629,7 @@ fun toggleLike(id: String) {
             </div>
         </footer>
 
-        <script src="js/i18n.js?v=2"></script>
+        <script src="js/i18n.js?v=4"></script>
         <script src="js/i18n-playground.js?v=29"></script>
         <script src="js/scripts.js?v=7"></script>
         <script src="js/sky.js?v=17"></script>
